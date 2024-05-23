@@ -91,7 +91,7 @@ public class RegistrationFragment extends Fragment {
         binding.registrationSignInTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_loginFragment);
+                Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_loginFragment);
             }
         });
         subscribe(viewModel);

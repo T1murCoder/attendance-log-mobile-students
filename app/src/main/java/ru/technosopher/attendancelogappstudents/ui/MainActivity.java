@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
         setContentView(R.layout.activity_main);
 
         navigationBar = findViewById(R.id.bottom_navigation_bar);
-        navigationBar.setItemEnabled(R.id.scanner, true);
+        navigationBar.setItemSelected(R.id.scanner, true);
         System.out.println(navigationBar.getSelectedItemId());
         navigationBar.setOnItemSelectedListener(destinationFragment -> {
             fragmentNavigation(0, destinationFragment);
