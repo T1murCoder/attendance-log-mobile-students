@@ -15,6 +15,7 @@ import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import java.util.Map;
 
 import ru.technosopher.attendancelogappstudents.R;
+import ru.technosopher.attendancelogappstudents.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements NavigationBarChangeListener, UpdateSharedPreferences {
 
@@ -56,14 +57,14 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
             navController.navigate(R.id.scannerFragment);
 //            navigationBar.setItemEnabled(R.id.lessons, true);
         }
-//        if (destinationFragment == R.id.group) {
-//            navController.navigate(R.id.groupFragment);
-////            navigationBar.setItemEnabled(R.id.groups, true);
-//        }
-//        if (destinationFragment == R.id.profile) {
-//            navController.navigate(R.id.profileFragment);
-////            navigationBar.setItemEnabled(R.id.profile, true);
-//        }
+        if (destinationFragment == R.id.group) {
+            navController.navigate(R.id.groupFragment);
+//            navigationBar.setItemEnabled(R.id.groups, true);
+        }
+        if (destinationFragment == R.id.profile) {
+            navController.navigate(R.id.profileFragment);
+//            navigationBar.setItemEnabled(R.id.profile, true);
+        }
     }
 
     @Override

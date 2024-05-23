@@ -39,41 +39,44 @@
         android:label="ScannerFragment"
         tools:layout="@layout/fragment_scanner">
 
-<!--        <action-->
-<!--            android:id="@+id/action_scannerFragment_to_groupFragment"-->
-<!--            app:destination="@id/groupFragment" />-->
-<!--        <action-->
-<!--            android:id="@+id/action_scannerFragment_to_profileFragment"-->
-<!--            app:destination="@id/profileFragment" />-->
+
+        <action
+            android:id="@+id/action_scannerFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_scannerFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
     </fragment>
 
-<!--    <fragment-->
-<!--        android:id="@+id/groupFragment"-->
-<!--        android:name="ru.technosopher.attendancelogappstudents.ui.group.groupFragment"-->
-<!--        android:label="GroupFragment"-->
-<!--        tools:layout="@layout/fragment_group">-->
+    <fragment
+        android:id="@+id/groupFragment"
+        android:name="ru.technosopher.attendancelogappstudents.ui.group.GroupFragment"
+        android:label="GroupFragment"
+        tools:layout="@layout/fragment_group">
 
-<!--        <action-->
-<!--            android:id="@+id/action_groupFragment_to_scannerFragment"-->
-<!--            app:destination="@id/scannerFragment" />-->
-<!--        <action-->
-<!--            android:id="@+id/action_groupFragment_to_profileFragment"-->
-<!--            app:destination="@id/profileFragment" />-->
-<!--    </fragment>-->
 
-<!--    <fragment-->
-<!--        android:id="@+id/profileFragment"-->
-<!--        android:name="ru.technosopher.attendancelogappstudents.ui.profile.profileFragment"-->
-<!--        android:label="ProfileFragment"-->
-<!--        tools:layout="@layout/fragment_profile">-->
+        <action
+            android:id="@+id/action_groupFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
 
-<!--        <action-->
-<!--            android:id="@+id/action_profileFragment_to_groupFragment"-->
-<!--            app:destination="@id/groupFragment" />-->
-<!--        <action-->
-<!--            android:id="@+id/action_profileFragment_to_scannerFragment"-->
-<!--            app:destination="@id/scannerFragment" />-->
-<!--    </fragment>-->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="ru.technosopher.attendancelogappstudents.ui.profile.ProfileFragment"
+        android:label="ProfileFragment"
+        tools:layout="@layout/fragment_profile">
+
+
+        <action
+            android:id="@+id/action_profileFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
+    </fragment>
 
 
 
