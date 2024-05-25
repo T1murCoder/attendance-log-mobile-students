@@ -14,9 +14,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import ru.technosopher.attendancelogappstudents.R;
-import ru.technosopher.attendancelogappstudents.domain.Utils.OnChangeText;
+import ru.technosopher.attendancelogappstudents.ui.utils.OnChangeText;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentRegistrationBinding;
-import ru.technosopher.attendancelogappstudents.domain.Utils.Utils;
+import ru.technosopher.attendancelogappstudents.ui.utils.Utils;
 import ru.technosopher.attendancelogappstudents.ui.NavigationBarChangeListener;
 import ru.technosopher.attendancelogappstudents.ui.UpdateSharedPreferences;
 

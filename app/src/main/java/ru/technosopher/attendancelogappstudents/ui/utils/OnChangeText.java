@@ -1,4 +1,4 @@
-package ru.technosopher.attendancelogappstudents.domain.Utils;
+package ru.technosopher.attendancelogappstudents.ui.utils;
 
 import android.text.Editable;
 import android.text.TextWatcher;
