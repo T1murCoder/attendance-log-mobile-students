@@ -18,12 +18,12 @@ public class UserDto {
     @SerializedName("username")
     public String username;
     @Nullable
-    @SerializedName("telegram_url")
+    @SerializedName("telegramUrl")
     public String telegram_url;
     @Nullable
-    @SerializedName("github_url")
+    @SerializedName("githubUrl")
     public String github_url;
     @Nullable
-    @SerializedName("photo_url")
+    @SerializedName("photoUrl")
     public String photo_url;
 }

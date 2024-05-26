@@ -71,4 +71,5 @@ dependencies {
     //Zxing
     implementation("com.google.zxing:core:$zxing_version")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
 }

@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -17,33 +16,24 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.camera.core.Camera;
-import androidx.camera.core.CameraSelector;
-import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.Preview;
-import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.journeyapps.barcodescanner.ScanContract;
-import com.journeyapps.barcodescanner.ScanOptions;
-
-import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
+import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
 import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentScannerBinding;
 import ru.technosopher.attendancelogappstudents.domain.entities.LessonEntity;
 import ru.technosopher.attendancelogappstudents.ui.NavigationBarChangeListener;
 import ru.technosopher.attendancelogappstudents.ui.UpdateSharedPreferences;
-import ru.technosopher.attendancelogappstudents.ui.login.LoginViewModel;
-import ru.technosopher.attendancelogappstudents.ui.profile.ProfileViewModel;
 import ru.technosopher.attendancelogappstudents.ui.utils.DateFormatter;
 
 public class ScannerFragment extends Fragment {
+
+    private final String TAG = "SCANNER_FRAGMENT";
 
     private NavigationBarChangeListener navigationBarChangeListener;
     private UpdateSharedPreferences prefs;
@@ -52,12 +42,15 @@ public class ScannerFragment extends Fragment {
     private View scannerView;
     private View scannerResultView;
 
+    private DecoratedBarcodeView barcodeView;
+    private boolean isScanning = true;
+
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
         @Override
         public void onActivityResult(Boolean o) {
             if (o) {
-                Log.d("SCANNER_FRAGMENT", "Permission granted! onActivityResult");
-                scanCode();
+                Log.d(TAG, "Permission granted! onActivityResult");
+                initializeScanner();
             }
         }
     });
@@ -80,22 +73,37 @@ public class ScannerFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(ScannerViewModel.class);
         binding = FragmentScannerBinding.bind(view);
 
-        Button scanQrButton = scannerView.findViewById(R.id.btn_scan_qr);
-
-        scanQrButton.setOnClickListener(v -> {
-            if (allPermissionGranted()) {
-                scanCode();
-            } else {
-                activityResultLauncher.launch(Manifest.permission.CAMERA);
-            }
-        });
+        barcodeView = binding.barcodeScanner;
 
         ImageButton closeGroupInfoButton = scannerView.findViewById(R.id.btn_close_group_info);
 
         closeGroupInfoButton.setOnClickListener(v -> {
             scannerResultView.setVisibility(View.GONE);
+            binding.btnRefreshScan.setVisibility(View.VISIBLE);
         });
+
+        binding.btnRefreshScan.setOnClickListener(v -> {
+            binding.btnRefreshScan.setVisibility(View.GONE);
+            isScanning = true;
+        });
+
+        if (allPermissionGranted()) {
+            initializeScanner();
+        } else {
+            activityResultLauncher.launch(Manifest.permission.CAMERA);
+        }
         subscribe(viewModel);
+    }
+
+    private void initializeScanner() {
+        barcodeView.setStatusText("");
+        barcodeView.resume();
+        barcodeView.decodeContinuous(result -> {
+            if (isScanning) {
+                isScanning = false;
+                viewModel.markAttended(result.getResult().getText(), prefs.getPrefsId());
+            }
+        });
     }
 
     private void subscribe(ScannerViewModel viewModel) {
@@ -127,28 +135,6 @@ public class ScannerFragment extends Fragment {
         ) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void scanCode() {
-        ScanOptions scanOptions = new ScanOptions();
-        scanOptions.setPrompt("");
-        scanOptions.setTorchEnabled(false);
-        scanOptions.setOrientationLocked(true);
-        scanOptions.setBeepEnabled(false);
-        scanOptions.setCaptureActivity(QRCodeCaptureActivity.class);
-        barLauncher.launch(scanOptions);
-    }
-
-    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result ->
-    {
-       if(result.getContents() != null) {
-
-//           viewModel
-
-           //FIXME: получать айди текущего пользователя
-           viewModel.markAttended(result.getContents(), prefs.getPrefsId());
-
-       }
-    });
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -157,6 +143,24 @@ public class ScannerFragment extends Fragment {
             prefs = (UpdateSharedPreferences) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString());
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "Resuming scanner");
+        if (barcodeView != null) {
+            barcodeView.resume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "Pausing scanner");
+        if (barcodeView != null) {
+            barcodeView.pause();
         }
     }
 }
