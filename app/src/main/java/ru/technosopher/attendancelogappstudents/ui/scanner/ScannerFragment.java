@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -20,8 +22,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.journeyapps.barcodescanner.BarcodeCallback;
-import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
 import ru.technosopher.attendancelogappstudents.R;
@@ -44,6 +44,8 @@ public class ScannerFragment extends Fragment {
 
     private DecoratedBarcodeView barcodeView;
     private boolean isScanning = true;
+
+    private boolean isOverlayVisible;
 
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
         @Override
@@ -78,7 +80,7 @@ public class ScannerFragment extends Fragment {
         ImageButton closeGroupInfoButton = scannerView.findViewById(R.id.btn_close_group_info);
 
         closeGroupInfoButton.setOnClickListener(v -> {
-            scannerResultView.setVisibility(View.GONE);
+            if (isOverlayVisible) hideInfo();
             binding.btnRefreshScan.setVisibility(View.VISIBLE);
         });
 
@@ -111,6 +113,7 @@ public class ScannerFragment extends Fragment {
 
             if (!state.getSuccess() && !state.getLoading()) {
                 Toast.makeText(scannerView.getContext(), "Ошибка...", Toast.LENGTH_SHORT).show();
+                binding.btnRefreshScan.setVisibility(View.VISIBLE);
                 return;
             }
 
@@ -123,8 +126,7 @@ public class ScannerFragment extends Fragment {
             String time = DateFormatter.getFullTimeStringFromDate(lesson.getTimeStart(), lesson.getTimeEnd(), "HH:mm");
             binding.scannedGroupTime.setText(time);
             binding.scannedGroupTheme.setText(lesson.getTheme());
-
-            scannerResultView.setVisibility(View.VISIBLE);
+            if (!isOverlayVisible) showInfo();
         });
     }
 
@@ -162,5 +164,33 @@ public class ScannerFragment extends Fragment {
         if (barcodeView != null) {
             barcodeView.pause();
         }
+    }
+
+    private void showInfo() {
+        scannerResultView.setVisibility(View.VISIBLE);
+        Animation slideIn = AnimationUtils.loadAnimation(scannerView.getContext(), R.anim.slide_in);
+        scannerResultView.startAnimation(slideIn);
+
+        isOverlayVisible = true;
+    }
+
+    private void hideInfo() {
+        Animation slideOut = AnimationUtils.loadAnimation(scannerView.getContext(), R.anim.slide_out);
+        slideOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                scannerResultView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        scannerResultView.startAnimation(slideOut);
+        isOverlayVisible = false;
     }
 }
