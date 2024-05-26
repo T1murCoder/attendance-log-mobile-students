@@ -57,7 +57,9 @@ public class ScannerViewModel extends ViewModel {
                 }
             } else {
                 // TODO: Add Error
-                Log.d(TAG, status.getErrors().getMessage());
+                mutableLessonLiveData.postValue(fromLessonStatus(status));
+                Log.d(TAG, "Something going wrong");
+//                Log.d(TAG, status.getErrors().getMessage());
                 clearAllFields();
             }
         });

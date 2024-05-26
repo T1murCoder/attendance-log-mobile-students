@@ -1,6 +1,7 @@
 package ru.technosopher.attendancelogappstudents.ui.scanner;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -99,6 +100,12 @@ public class ScannerFragment extends Fragment {
 
     private void subscribe(ScannerViewModel viewModel) {
         viewModel.stateLiveData.observe(getViewLifecycleOwner(), state -> {
+
+            if (!state.getSuccess() && !state.getLoading()) {
+                Toast.makeText(scannerView.getContext(), "Ошибка...", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             LessonEntity lesson = state.getLesson();
 
             if (lesson == null) return;
@@ -108,6 +115,8 @@ public class ScannerFragment extends Fragment {
             String time = DateFormatter.getFullTimeStringFromDate(lesson.getTimeStart(), lesson.getTimeEnd(), "HH:mm");
             binding.scannedGroupTime.setText(time);
             binding.scannedGroupTheme.setText(lesson.getTheme());
+
+            scannerResultView.setVisibility(View.VISIBLE);
         });
     }
 
@@ -131,16 +140,23 @@ public class ScannerFragment extends Fragment {
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result ->
     {
        if(result.getContents() != null) {
-           Toast.makeText(scannerView.getContext(), result.getContents(), Toast.LENGTH_SHORT).show();
 
 //           viewModel
 
-
-           viewModel.markAttended(result.getContents(), "3");
-
-           scannerResultView.setVisibility(View.VISIBLE);
-
+           //FIXME: получать айди текущего пользователя
+           viewModel.markAttended(result.getContents(), prefs.getPrefsId());
 
        }
     });
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try{
+            navigationBarChangeListener = (NavigationBarChangeListener) context;
+            prefs = (UpdateSharedPreferences) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString());
+        }
+    }
 }
