@@ -85,6 +85,7 @@
         </LinearLayout>
 
         <HorizontalScrollView
+            android:id="@+id/hsr_students_table"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
@@ -178,6 +179,16 @@
             </LinearLayout>
 
         </HorizontalScrollView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:visibility="gone"
+            android:id="@+id/students_empty_lessons_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/dummy_item_list"
+            tools:itemCount="10"/>
 
     </LinearLayout>
 

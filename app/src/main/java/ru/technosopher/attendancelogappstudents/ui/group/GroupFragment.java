@@ -82,12 +82,28 @@ public class GroupFragment extends Fragment {
             } else {
                 if (state.getSuccess()) {
                     binding.tableGroupName.setText(state.getGroupName());
-                    binding.tableContent.setVisibility(View.VISIBLE);
                     binding.tableProgressBar.setVisibility(View.GONE);
                     binding.tableErrorTv.setVisibility(View.GONE);
                     binding.tableContent.setVisibility(View.VISIBLE);
-                    attendancesAdapter.updateData(state.getStudents());
-                    datesAdapter.update(viewModel.extractDates(state.getStudents().get(0).getAttendanceEntityList()));
+                    if (state.getStudents().get(0).getAttendanceEntityList().isEmpty()) {
+                        binding.buttonsAttPointsLayout.setVisibility(View.GONE);
+                        binding.hsrStudentsTable.setVisibility(View.GONE);
+                        binding.studentsRv.setVisibility(View.GONE);
+                        binding.studentsEmptyLessonsRv.setVisibility(View.VISIBLE);
+
+                        StudentsListAdapterForTable adapter = new StudentsListAdapterForTable();
+                        binding.studentsEmptyLessonsRv.setAdapter(adapter);
+                        adapter.updateData(state.getStudents());
+                    } else {
+                        binding.buttonsAttPointsLayout.setVisibility(View.VISIBLE);
+                        binding.hsrStudentsTable.setVisibility(View.VISIBLE);
+                        binding.studentsRv.setVisibility(View.VISIBLE);
+                        binding.studentsEmptyLessonsRv.setVisibility(View.GONE);
+
+
+                        attendancesAdapter.updateData(state.getStudents());
+                        datesAdapter.update(viewModel.extractDates(state.getStudents().get(0).getAttendanceEntityList()));
+                    }
                 }
             }
         });

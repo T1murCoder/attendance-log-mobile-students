@@ -78,9 +78,12 @@ public class GroupViewModel extends ViewModel {
                         });
                     });
 
+                } else {
+                    mutableErrorLiveData.postValue("Вы не состоите в группе!");
+                    groupId = null;
                 }
             } else {
-                mutableErrorLiveData.postValue("Вы не состоите в группе!");
+                mutableErrorLiveData.postValue("Что-то пошло не так. Попробуйте еще раз");
                 groupId = null;
             }
         });
