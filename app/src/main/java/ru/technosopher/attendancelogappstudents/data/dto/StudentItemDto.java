@@ -4,7 +4,8 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
-public class StudentDto {
+public class StudentItemDto {
+
     @Nullable
     @SerializedName("id")
     public String id;
@@ -16,8 +17,4 @@ public class StudentDto {
     @Nullable
     @SerializedName("surname")
     public String surname;
-
-    @Nullable
-    @SerializedName("points")
-    public String points;
 }

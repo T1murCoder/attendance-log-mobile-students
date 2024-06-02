@@ -36,4 +36,5 @@
     <string name="group_scanned_date">Дата</string>
     <string name="group_scanned_time">Время</string>
     <string name="group_scanned_theme">Тема</string>
+    <string name="table_group_name_header">Название группы</string>
 </resources>

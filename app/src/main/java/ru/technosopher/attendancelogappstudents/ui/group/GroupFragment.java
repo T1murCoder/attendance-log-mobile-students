@@ -1,5 +1,6 @@
 package ru.technosopher.attendancelogappstudents.ui.group;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,19 +9,20 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentGroupBinding;
+import ru.technosopher.attendancelogappstudents.domain.entities.AttendanceEntity;
 import ru.technosopher.attendancelogappstudents.ui.NavigationBarChangeListener;
 import ru.technosopher.attendancelogappstudents.ui.UpdateSharedPreferences;
-import ru.technosopher.attendancelogappstudents.ui.profile.ProfileViewModel;
 
 public class GroupFragment extends Fragment {
-    private NavigationBarChangeListener navigationBarChangeListener;
-    private UpdateSharedPreferences prefs;
     private FragmentGroupBinding binding;
-
-    private ProfileViewModel viewModel;
+    private UpdateSharedPreferences prefs;
+    private GroupViewModel viewModel;
+    private NavigationBarChangeListener navigationBarChangeListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,5 +37,83 @@ public class GroupFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        binding = FragmentGroupBinding.bind(view);
+
+
+        viewModel = new ViewModelProvider(this).get(GroupViewModel.class);
+        viewModel.saveGroupIdByStudentId(prefs.getPrefsId()); //КОСТЫЛЬ!!!!!!!
+
+        StudentAttendancesAdapter attendancesAdapter = new StudentAttendancesAdapter(getContext(), true);
+        DatesAdapter datesAdapter = new DatesAdapter();
+
+
+        binding.pointsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewModel.update(prefs.getPrefsId());
+                attendancesAdapter.updateState(false);
+                attendancesAdapter.updateData(viewModel.getStudents());
+                datesAdapter.update(viewModel.extractDates(viewModel.getStudents().get(0).getAttendanceEntityList()));
+            }
+        });
+        binding.attendanceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewModel.update(prefs.getPrefsId());
+                attendancesAdapter.updateState(true);
+                attendancesAdapter.updateData(viewModel.getStudents());
+                datesAdapter.update(viewModel.extractDates(viewModel.getStudents().get(0).getAttendanceEntityList()));
+            }
+        });
+
+        binding.studentsRv.setAdapter(attendancesAdapter);
+        binding.datesRv.setAdapter(datesAdapter);
+
+        subscribe(viewModel, attendancesAdapter, datesAdapter);
+        viewModel.update(prefs.getPrefsId()); //КОСТЫЛЬ, ПРОСТИТЕ
     }
+
+    private void subscribe(GroupViewModel viewModel, StudentAttendancesAdapter attendancesAdapter, DatesAdapter datesAdapter) {
+        viewModel.stateLiveData.observe(getViewLifecycleOwner(), state -> {
+            if (state.getLoading()) {
+                binding.tableContent.setVisibility(View.GONE);
+                binding.tableErrorTv.setVisibility(View.GONE);
+                binding.tableProgressBar.setVisibility(View.VISIBLE);
+            } else {
+                if (state.getSuccess()) {
+                    binding.tableGroupName.setText(state.getGroupName());
+                    binding.tableContent.setVisibility(View.VISIBLE);
+                    binding.tableProgressBar.setVisibility(View.GONE);
+                    binding.tableErrorTv.setVisibility(View.GONE);
+                    binding.tableContent.setVisibility(View.VISIBLE);
+                    attendancesAdapter.updateData(state.getStudents());
+                    datesAdapter.update(viewModel.extractDates(state.getStudents().get(0).getAttendanceEntityList()));
+                }
+            }
+        });
+
+        viewModel.errorLiveData.observe(getViewLifecycleOwner(), errorMsg ->{
+            binding.tableErrorTv.setVisibility(View.VISIBLE);
+            binding.tableErrorTv.setText(errorMsg);
+            binding.tableContent.setVisibility(View.GONE);
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        binding = null;
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try{
+            navigationBarChangeListener = (NavigationBarChangeListener) context;
+            prefs = (UpdateSharedPreferences) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString());
+        }
+    }
+
 }
