@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="ru.technosopher.attendancelogappstudents.ui.registration.RegistrationFragment"
+        android:label="SignFragment"
+        tools:layout="@layout/fragment_registration">
+
+        <action
+            android:id="@+id/action_registrationFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_registrationFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="ru.technosopher.attendancelogappstudents.ui.login.LoginFragment"
+        android:label="RegistrationFragment"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_loginFragment_to_registrationFragment"
+            app:destination="@id/registrationFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scannerFragment"
+        android:name="ru.technosopher.attendancelogappstudents.ui.scanner.ScannerFragment"
+        android:label="ScannerFragment"
+        tools:layout="@layout/fragment_scanner">
+
+
+        <action
+            android:id="@+id/action_scannerFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_scannerFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/groupFragment"
+        android:name="ru.technosopher.attendancelogappstudents.ui.group.GroupFragment"
+        android:label="GroupFragment"
+        tools:layout="@layout/fragment_group">
+
+
+        <action
+            android:id="@+id/action_groupFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="ru.technosopher.attendancelogappstudents.ui.profile.ProfileFragment"
+        android:label="ProfileFragment"
+        tools:layout="@layout/fragment_profile">
+
+
+        <action
+            android:id="@+id/action_profileFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
+    </fragment>
+
+
+
+</navigation>
