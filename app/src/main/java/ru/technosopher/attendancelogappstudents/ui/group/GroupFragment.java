@@ -10,13 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentGroupBinding;
-import ru.technosopher.attendancelogappstudents.domain.entities.AttendanceEntity;
-import ru.technosopher.attendancelogappstudents.ui.NavigationBarChangeListener;
-import ru.technosopher.attendancelogappstudents.ui.UpdateSharedPreferences;
+import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
+import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences;
 
 public class GroupFragment extends Fragment {
     private FragmentGroupBinding binding;

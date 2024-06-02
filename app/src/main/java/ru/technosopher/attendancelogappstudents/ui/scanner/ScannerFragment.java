@@ -27,8 +27,8 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentScannerBinding;
 import ru.technosopher.attendancelogappstudents.domain.entities.LessonEntity;
-import ru.technosopher.attendancelogappstudents.ui.NavigationBarChangeListener;
-import ru.technosopher.attendancelogappstudents.ui.UpdateSharedPreferences;
+import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
+import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences;
 import ru.technosopher.attendancelogappstudents.ui.utils.DateFormatter;
 
 public class ScannerFragment extends Fragment {

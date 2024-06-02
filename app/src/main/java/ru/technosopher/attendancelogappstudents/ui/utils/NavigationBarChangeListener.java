@@ -1,4 +1,4 @@
-package ru.technosopher.attendancelogappstudents.ui;
+package ru.technosopher.attendancelogappstudents.ui.utils;
 
 public interface NavigationBarChangeListener {
     void hideNavigationBar();

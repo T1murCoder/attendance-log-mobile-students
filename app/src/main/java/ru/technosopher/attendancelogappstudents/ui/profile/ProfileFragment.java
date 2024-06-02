@@ -16,8 +16,8 @@ import com.squareup.picasso.Picasso;
 import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentProfileBinding;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
-import ru.technosopher.attendancelogappstudents.ui.NavigationBarChangeListener;
-import ru.technosopher.attendancelogappstudents.ui.UpdateSharedPreferences;
+import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
+import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences;
 
 public class ProfileFragment extends Fragment {
 

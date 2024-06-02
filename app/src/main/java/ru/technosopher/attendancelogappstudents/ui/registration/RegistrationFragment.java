@@ -17,8 +17,8 @@ import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.ui.utils.OnChangeText;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentRegistrationBinding;
 import ru.technosopher.attendancelogappstudents.ui.utils.Utils;
-import ru.technosopher.attendancelogappstudents.ui.NavigationBarChangeListener;
-import ru.technosopher.attendancelogappstudents.ui.UpdateSharedPreferences;
+import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
+import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences;
 
 
 public class RegistrationFragment extends Fragment {

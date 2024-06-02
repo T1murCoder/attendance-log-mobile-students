@@ -15,7 +15,8 @@ import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import java.util.Map;
 
 import ru.technosopher.attendancelogappstudents.R;
-import ru.technosopher.attendancelogappstudents.databinding.ActivityMainBinding;
+import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
+import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences;
 
 public class MainActivity extends AppCompatActivity implements NavigationBarChangeListener, UpdateSharedPreferences {
 
