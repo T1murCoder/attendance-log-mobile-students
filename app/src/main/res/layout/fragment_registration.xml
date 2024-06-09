@@ -41,14 +41,14 @@
                 android:id="@+id/registration_name_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/action_elements_background"
+                android:cursorVisible="true"
                 android:ems="10"
-                android:hint="First Name"
+                android:hint="Имя"
                 android:inputType="text"
                 android:padding="20dp"
-                android:textColor="@color/main_gray"
+                android:textColor="@color/black"
                 android:textCursorDrawable="@color/main_gray"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@+id/editTextText2"
@@ -60,14 +60,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/action_elements_background"
+                android:cursorVisible="true"
                 android:ems="10"
-                android:hint="Last Name"
+                android:hint="Фамилия"
                 android:inputType="text"
                 android:padding="20dp"
-                android:textColor="@color/main_gray"
+                android:textColor="@color/black"
                 android:textCursorDrawable="@color/main_gray"
                 android:textSize="16sp"
-
                 app:layout_constraintBottom_toTopOf="@+id/editTextText3" />
 
             <EditText
@@ -76,11 +76,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/action_elements_background"
+                android:cursorVisible="true"
                 android:ems="10"
-                android:hint="Login"
+                android:hint="Логин"
                 android:inputType="text"
                 android:padding="20dp"
-                android:textColor="@color/main_gray"
+                android:textColor="@color/black"
                 android:textCursorDrawable="@color/main_gray"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@+id/password_edit_text_layout" />
@@ -104,7 +105,7 @@
                     android:background="@drawable/action_elements_background"
                     android:hint="@string/password_edit_text_hint"
                     android:inputType="textPassword"
-                    android:textColor="@color/main_gray"
+                    android:textColor="@color/black"
                     android:textColorHint="@color/main_gray"
                     android:textCursorDrawable="@color/main_gray"
                     android:textSize="16sp" />
@@ -148,10 +149,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <CheckBox
+                <androidx.appcompat.widget.AppCompatCheckBox
                     android:id="@+id/registration_remember_cb"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:theme="@style/InactiveCheckBox" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -168,17 +170,18 @@
                 android:layout_marginBottom="20dp"
                 android:orientation="horizontal">
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/registration_confirm_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/action_elements_background"
+                    android:backgroundTint="@color/main_blue"
                     android:fontFamily="@font/inter_regular"
                     android:padding="16dp"
                     android:text="Sign up"
+                    android:textAllCaps="false"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
-                    app:backgroundTint="@color/main_blue" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
 

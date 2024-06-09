@@ -12,7 +12,7 @@
     <string name="groups_list_item_content_button_description">Open journal</string>
     <string name="groups_fab_content_description">Create new journal</string>
     <string name="groups_text">Groups</string>
-    <string name="password_edit_text_hint">Password</string>
+    <string name="password_edit_text_hint">Пароль</string>
 
     <string name="SHARED_PREFS_ID">PREFS_ID</string>
     <string name="SHARED_PREFS_LOGIN">PREFS_LOGIN</string>
@@ -37,4 +37,5 @@
     <string name="group_scanned_time">Время</string>
     <string name="group_scanned_theme">Тема</string>
     <string name="table_group_name_header">Название группы</string>
+    <string name="login_et_hint">Логин</string>
 </resources>

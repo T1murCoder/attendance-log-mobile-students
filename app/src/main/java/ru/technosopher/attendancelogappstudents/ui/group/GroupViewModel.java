@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ru.technosopher.attendancelogappstudents.data.GroupRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.data.StudentRepositoryImpl;
@@ -53,7 +54,7 @@ public class GroupViewModel extends ViewModel {
     public void update(@NonNull String id) {
 
         getGroupByStudentIdUseCase.execute(id, groupIdStatus -> {
-            if (groupIdStatus.getErrors() == null && groupIdStatus.getValue() != null) {
+            if (groupIdStatus.getErrors() == null) {
                 groupId = groupIdStatus.getValue();
 
                 if (groupId != null) {
@@ -63,15 +64,15 @@ public class GroupViewModel extends ViewModel {
                             if (groupNameStatus.getStatusCode() == 200 && groupNameStatus.getErrors() == null && groupNameStatus.getValue() != null) {
                                 List<StudentEntity> students = status.getValue() != null ? status.getValue() : null;
                                 List<StudentEntity> sortedOrNullStudents = sortAttendancesForStudents(students);
+                                List<StudentEntity> sortStudentsByPoints = sortStudentsByPoints(sortedOrNullStudents);
                                 Log.d(TAG, sortedOrNullStudents.toString());
                                 Log.d(TAG, sortedOrNullStudents.get(0).getPoints());
-                                this.students = status.getValue() != null ? status.getValue() : null;
-                                mutableStateLiveData.postValue(new State(groupNameStatus.getValue(), status.getValue() != null ? status.getValue() : null,
+                                this.students = sortStudentsByPoints;
+                                mutableStateLiveData.postValue(new State(groupNameStatus.getValue(), sortStudentsByPoints,
                                         status.getErrors() != null ? status.getErrors().getLocalizedMessage() : null,
-                                        status.getErrors() == null && status.getValue() != null && !sortedOrNullStudents.isEmpty(), false));
+                                        status.getErrors() == null && status.getValue() != null && !sortStudentsByPoints.isEmpty(), false));
                             } else {
 
-                                System.out.println(status.getErrors());
                                 System.out.println(status.getStatusCode());
                                 mutableErrorLiveData.postValue("Что-то пошло не так. Попробуйте еще раз");
                             }
@@ -98,10 +99,20 @@ public class GroupViewModel extends ViewModel {
         }
         return students;
     }
+
+    private List<StudentEntity> sortStudentsByPoints(@Nullable List<StudentEntity> students) {
+        if (students == null) return new ArrayList<>();
+
+        return students.stream()
+                .sorted(Comparator.comparing(studentEntity -> -Integer.parseInt(studentEntity.getPoints())))
+                .collect(Collectors.toList());
+    }
+
     private void sortAttendances(@Nullable List<AttendanceEntity> attendances) {
         if (attendances == null) return;
         attendances.sort(Comparator.comparing(AttendanceEntity::getLessonTimeStart));
     }
+
     public List<String> extractDates(List<AttendanceEntity> attendances) {
         List<String> dates = new ArrayList<>();
         sortAttendances(attendances);

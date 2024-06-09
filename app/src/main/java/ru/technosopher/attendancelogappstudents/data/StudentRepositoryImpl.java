@@ -44,7 +44,7 @@ public class StudentRepositoryImpl implements StudentRepository {
                             assert dto.attendanceDtoList != null;
                             List<AttendanceEntity> attendanceEntityList = Mapper.fromAttendanceDtoToAttendanceEntityList(dto.attendanceDtoList);
                             if (id != null && name != null && surname != null){
-                                res.add(new StudentEntity(id, name, surname, "0", attendanceEntityList));
+                                res.add(new StudentEntity(id, name, surname, points, attendanceEntityList));
                             }
                         }
                         System.out.println(res);

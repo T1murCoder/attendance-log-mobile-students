@@ -3,15 +3,20 @@ package ru.technosopher.attendancelogappstudents.ui.group;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
+import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.databinding.StudentTableItemBinding;
 import ru.technosopher.attendancelogappstudents.domain.entities.AttendanceEntity;
 import ru.technosopher.attendancelogappstudents.domain.entities.StudentEntity;
@@ -39,7 +44,7 @@ public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAtten
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(data.get(position), state);
+        holder.bind(data.get(position), state, position);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -68,8 +73,30 @@ public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAtten
             this.binding = binding;
         }
 
-        public void bind(StudentEntity item, boolean att) {
+        public void bind(StudentEntity item, boolean att, int position) {
             binding.tableStudentName.setText(item.getFullName());
+            binding.tvPlace.setText(Integer.toString(position + 1));
+
+            if (position == 0) {
+                binding.ivWreath.setVisibility(View.VISIBLE);
+                binding.ivWreath.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.drawable.laurel_wreath_gold, context.getTheme()));
+            } else if (position == 1) {
+                binding.ivWreath.setVisibility(View.VISIBLE);
+                binding.ivWreath.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.drawable.laurel_wreath_silver, context.getTheme()));
+            } else if (position == 2) {
+                binding.ivWreath.setVisibility(View.VISIBLE);
+                binding.ivWreath.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.drawable.laurel_wreath_bronze, context.getTheme()));
+
+            }
+
+            //TODO: Перенести сортировку во ViewModel
+//            List<AttendanceEntity> attendanceEntityList = item.getAttendanceEntityList()
+//                    .stream()
+//                    .sorted(Comparator.comparing(AttendanceEntity::getPoints))
+//                    .collect(Collectors.toList());
+
+            binding.tvPoints.setText(item.getPoints());
+
             if (att) {
                 CheckBoxAdapter adapter = new CheckBoxAdapter(context);
                 binding.attAndBallsRv.setAdapter(adapter);

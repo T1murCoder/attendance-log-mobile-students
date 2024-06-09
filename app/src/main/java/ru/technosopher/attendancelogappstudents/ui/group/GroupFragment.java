@@ -130,4 +130,9 @@ public class GroupFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewModel.saveGroupIdByStudentId(prefs.getPrefsId());
+    }
 }
