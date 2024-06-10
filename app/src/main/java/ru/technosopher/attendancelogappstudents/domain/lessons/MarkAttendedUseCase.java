@@ -15,9 +15,10 @@ public class MarkAttendedUseCase {
         this.repository = lessonRepository;
     }
 
-    public void execute(@NonNull String lessonId,
+    public void execute(@NonNull String qrCodeId,
                         @NonNull String studentId,
                         @NonNull Consumer<Status<LessonEntity>> callback) {
-        repository.markAttended(lessonId, studentId, callback);
+//        repository.markAttendedByLessonId(lessonId, studentId, callback);
+        repository.markAttendedByQRCodeId(qrCodeId, studentId, callback);
     }
 }

@@ -2,6 +2,7 @@ package ru.technosopher.attendancelogappstudents.ui.profile;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.squareup.picasso.Picasso;
 
@@ -18,6 +20,7 @@ import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentProfileBinding;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
+import ru.technosopher.attendancelogappstudents.ui.utils.OnChangeText;
 import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences;
 
 public class ProfileFragment extends Fragment {
@@ -49,6 +52,101 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 viewModel.logout();
+            }
+        });
+
+        binding.profileNameEditBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!binding.profileNameEt.isFocusable()){
+                    binding.profileNameEt.setFocusable(true);
+                    binding.profileNameEt.setFocusableInTouchMode(true);
+                    binding.profileNameEt.setEnabled(true);
+                }else{
+                    binding.profileNameEt.setFocusable(false);
+                    binding.profileNameEt.setFocusableInTouchMode(false);
+                    binding.profileNameEt.setEnabled(false);
+                }
+
+            }
+        });
+        binding.profileSurnameEditBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!binding.profileSurnameEt.isFocusable()){
+                    binding.profileSurnameEt.setFocusable(true);
+                    binding.profileSurnameEt.setFocusableInTouchMode(true);
+                    binding.profileSurnameEt.setEnabled(true);
+                }else{
+                    binding.profileSurnameEt.setFocusable(false);
+                    binding.profileSurnameEt.setFocusableInTouchMode(false);
+                    binding.profileSurnameEt.setEnabled(false);
+                }
+            }
+        });
+        binding.profileTelegramEditBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!binding.profileTelegramEt.isFocusable()){
+                    binding.profileTelegramEt.setFocusable(true);
+                    binding.profileTelegramEt.setFocusableInTouchMode(true);
+                    binding.profileTelegramEt.setEnabled(true);
+                }else{
+                    binding.profileTelegramEt.setFocusable(false);
+                    binding.profileTelegramEt.setFocusableInTouchMode(false);
+                    binding.profileTelegramEt.setEnabled(false);
+                }
+            }
+        });
+        binding.profileGithubEditBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!binding.profileGithubEt.isFocusable()){
+                    binding.profileGithubEt.setFocusable(true);
+                    binding.profileGithubEt.setFocusableInTouchMode(true);
+                    binding.profileGithubEt.setEnabled(true);
+                }else{
+                    binding.profileGithubEt.setFocusable(false);
+                    binding.profileGithubEt.setFocusableInTouchMode(false);
+                    binding.profileGithubEt.setEnabled(false);
+                }
+            }
+        });
+
+        binding.profileNameEt.addTextChangedListener(new OnChangeText(){
+            @Override
+            public void afterTextChanged(Editable editable) {
+                super.afterTextChanged(editable);
+                viewModel.changeName(editable.toString());
+            }
+        });
+        binding.profileSurnameEt.addTextChangedListener(new OnChangeText(){
+            @Override
+            public void afterTextChanged(Editable editable) {
+                super.afterTextChanged(editable);
+                viewModel.changeSurname(editable.toString());
+            }
+        });
+
+        binding.profileTelegramEt.addTextChangedListener(new OnChangeText(){
+            @Override
+            public void afterTextChanged(Editable editable) {
+                super.afterTextChanged(editable);
+                viewModel.changeTelegram(editable.toString());
+            }
+        });
+        binding.profileGithubEt.addTextChangedListener(new OnChangeText(){
+            @Override
+            public void afterTextChanged(Editable editable) {
+                super.afterTextChanged(editable);
+                viewModel.changeGithub(editable.toString());
+            }
+        });
+
+        binding.swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                viewModel.updateProfile(prefs.getPrefsId(), prefs.getPrefsLogin());
             }
         });
 
