@@ -55,16 +55,16 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
     private void fragmentNavigation(int previousFragment, int destinationFragment) {
         navController = Navigation.findNavController(MainActivity.this, R.id.fragmentContainerView);
         if (destinationFragment == R.id.scanner) {
+
             navController.navigate(R.id.scannerFragment);
-//            navigationBar.setItemEnabled(R.id.lessons, true);
         }
         if (destinationFragment == R.id.group) {
+
             navController.navigate(R.id.groupFragment);
-//            navigationBar.setItemEnabled(R.id.groups, true);
         }
         if (destinationFragment == R.id.profile) {
+
             navController.navigate(R.id.profileFragment);
-//            navigationBar.setItemEnabled(R.id.profile, true);
         }
     }
 
@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
                             String surname,
                             String telegram,
                             String github,
-                            String photo) {
+                            String photo,
+                            Boolean remember) {
         updateId(id);
         updateLogin(login);
         updatePassword(password);
@@ -85,7 +86,22 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
         updatePhoto(photo);
         updateName(name);
         updateSurname(surname);
+        updateRemember(remember);
     }
+
+    @Override
+    public void clearAll() {
+        updateId("");
+        updateLogin("");
+        updatePassword("");
+        updateTelegram("");
+        updateGithub("");
+        updatePhoto("");
+        updateName("");
+        updateSurname("");
+        updateRemember(false);
+    }
+
 
     @Override
     public Map<String, ?> getPrefs() {
@@ -139,6 +155,12 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
     public String getPrefsSurname() {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         return sharedPref.getString(getString(R.string.SHARED_PREFS_SURNAME), null);
+    }
+
+    @Override
+    public Boolean getRemember() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getString(getString(R.string.SHARED_PREFS_CHECKED), "").equals("y");
     }
 
     @Override
@@ -203,5 +225,19 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(getString(R.string.SHARED_PREFS_SURNAME), surname);
         editor.apply();
+    }
+
+    @Override
+    public void updateRemember(Boolean b) {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        String s = b ? "y" : "n";
+        editor.putString(getString(R.string.SHARED_PREFS_CHECKED), s);
+        editor.apply();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

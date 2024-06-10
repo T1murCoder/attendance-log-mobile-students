@@ -29,6 +29,7 @@
                 android:layout_alignBottom="@id/profile_avatar_iv"
                 android:backgroundTint="@color/main_blue"
                 android:clickable="true"
+                android:visibility="gone"
                 android:contentDescription="@string/groups_fab_content_description"
                 android:src="@drawable/ic_new_avatar"
                 android:tint="@color/white"

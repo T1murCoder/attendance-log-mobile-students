@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.squareup.picasso.Picasso;
 
@@ -41,8 +42,16 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentProfileBinding.bind(view);
-        navigationBarChangeListener.changeSelectedItem(R.id.profile);
+//        navigationBarChangeListener.changeSelectedItem(R.id.profile);
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+
+        binding.profileLogoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewModel.logout();
+            }
+        });
+
         subscribe(viewModel);
         viewModel.loadPrefs(
                 prefs.getPrefsId(),
@@ -69,7 +78,16 @@ public class ProfileFragment extends Fragment {
             // TODO (validate link)
             if (user.getPhoto_url() != null) Picasso.get().load(user.getPhoto_url()).into(binding.profileAvatarIv);
 
-            //TODO (Do something with notifications)
+            viewModel.logoutLiveData.observe(getViewLifecycleOwner(), unused -> {
+                prefs.clearAll();
+                View view = getView();
+                if (view == null) return;
+                Navigation.findNavController(view).navigate(R.id.action_profileFragment_to_loginFragment);
+//            Navigation.findNavController(view).navigate(
+//                    R.id.action_profileFragment_to_loginFragment,
+//                    null,
+//                    new NavOptions.Builder().setPopUpTo(R.id.profileFragment, true).build());
+            });
         });
     }
 

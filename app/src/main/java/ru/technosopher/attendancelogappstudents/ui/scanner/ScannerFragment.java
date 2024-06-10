@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -33,6 +32,10 @@ import ru.technosopher.attendancelogappstudents.ui.utils.DateFormatter;
 
 public class ScannerFragment extends Fragment {
 
+    public static final String SCANNER_GROUP_NAME = "GROUP_NAME";
+    public static final String SCANNER_LESSON_DATE = "SCANNER_LESSON_DATE";
+    public static final String SCANNER_LESSON_TIME = "LESSON_TIME";
+    public static final String SCANNER_LESSON_THEME = "LESSON_THEME";
     private final String TAG = "SCANNER_FRAGMENT";
 
     private NavigationBarChangeListener navigationBarChangeListener;
@@ -65,7 +68,6 @@ public class ScannerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         scannerView = inflater.inflate(R.layout.fragment_scanner, container, false);
-        scannerResultView = scannerView.findViewById(R.id.scanned_group_result);
         return scannerView;
     }
 
@@ -76,13 +78,6 @@ public class ScannerFragment extends Fragment {
         binding = FragmentScannerBinding.bind(view);
 
         barcodeView = binding.barcodeScanner;
-
-        ImageButton closeGroupInfoButton = scannerView.findViewById(R.id.btn_close_group_info);
-
-        closeGroupInfoButton.setOnClickListener(v -> {
-            if (isOverlayVisible) hideInfo();
-            binding.btnRefreshScan.setVisibility(View.VISIBLE);
-        });
 
         binding.btnRefreshScan.setOnClickListener(v -> {
             binding.btnRefreshScan.setVisibility(View.GONE);
@@ -121,12 +116,18 @@ public class ScannerFragment extends Fragment {
 
             if (lesson == null) return;
 
-            binding.scannedGroupName.setText(lesson.getGroupName());
-            binding.scannedGroupDate.setText(DateFormatter.getDateStringFromDate(lesson.getDate(), "dd.MM.YYYY"));
-            String time = DateFormatter.getFullTimeStringFromDate(lesson.getTimeStart(), lesson.getTimeEnd(), "HH:mm");
-            binding.scannedGroupTime.setText(time);
-            binding.scannedGroupTheme.setText(lesson.getTheme());
-            if (!isOverlayVisible) showInfo();
+            Bundle info = new Bundle();
+            info.putString(SCANNER_GROUP_NAME, lesson.getGroupName());
+            info.putString(SCANNER_LESSON_DATE, DateFormatter.getDateStringFromDate(lesson.getDate(), "dd.MM.YYYY"));
+            info.putString(SCANNER_LESSON_TIME, DateFormatter.getFullTimeStringFromDate(lesson.getTimeStart(), lesson.getTimeEnd(), "HH:mm"));
+            info.putString(SCANNER_LESSON_THEME, lesson.getTheme());
+
+            BottomSheetLessonInfo bottomSheetLessonInfo = new BottomSheetLessonInfo();
+            bottomSheetLessonInfo.setArguments(info);
+
+            bottomSheetLessonInfo.show(requireActivity().getSupportFragmentManager(), TAG);
+
+            binding.btnRefreshScan.setVisibility(View.VISIBLE);
         });
     }
 

@@ -38,4 +38,5 @@
     <string name="group_scanned_theme">Тема</string>
     <string name="table_group_name_header">Название группы</string>
     <string name="login_et_hint">Логин</string>
+    <string name="SHARED_PREFS_CHECKED">false</string>
 </resources>

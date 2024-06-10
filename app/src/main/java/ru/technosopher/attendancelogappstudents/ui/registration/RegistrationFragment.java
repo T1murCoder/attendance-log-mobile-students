@@ -40,7 +40,6 @@ public class RegistrationFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_registration, container, false);
     }
 
-    // TODO(better way of ending this part)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -49,6 +48,7 @@ public class RegistrationFragment extends Fragment {
 
         try {
             navigationBarChangeListener.hideNavigationBar();
+//            navigationBarChangeListener.changeSelectedItem(R.id.scannerFragment);
         } catch (ClassCastException ignored) {
         }
 
@@ -88,12 +88,13 @@ public class RegistrationFragment extends Fragment {
             }
         });
 
-        binding.registrationSignInTv.setOnClickListener(new View.OnClickListener() {
+        binding.registrationSignInLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_loginFragment);
             }
         });
+        binding.registrationRememberCb.setChecked(false);
         subscribe(viewModel);
     }
 
@@ -105,7 +106,7 @@ public class RegistrationFragment extends Fragment {
 
         viewModel.userLiveData.observe(getViewLifecycleOwner(), state -> {
 
-            System.out.println("IM IN FRAGMENT");
+//            System.out.println("IM IN FRAGMENT");
             prefs.updatePrefs(
                     state.getUser().getId(),
                     state.getUser().getUsername(),
@@ -114,7 +115,8 @@ public class RegistrationFragment extends Fragment {
                     state.getUser().getSurname(),
                     state.getUser().getTelegram_url(),
                     state.getUser().getGithub_url(),
-                    state.getUser().getPhoto_url()
+                    state.getUser().getPhoto_url(),
+                    binding.registrationRememberCb.isChecked()
             );
         });
 
