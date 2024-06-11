@@ -106,7 +106,6 @@ public class RegistrationFragment extends Fragment {
 
         viewModel.userLiveData.observe(getViewLifecycleOwner(), state -> {
 
-//            System.out.println("IM IN FRAGMENT");
             prefs.updatePrefs(
                     state.getUser().getId(),
                     state.getUser().getUsername(),

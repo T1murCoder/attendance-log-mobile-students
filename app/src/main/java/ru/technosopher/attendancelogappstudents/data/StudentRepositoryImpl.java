@@ -43,11 +43,11 @@ public class StudentRepositoryImpl implements StudentRepository {
                             final String points = dto.points;
                             assert dto.attendanceDtoList != null;
                             List<AttendanceEntity> attendanceEntityList = Mapper.fromAttendanceDtoToAttendanceEntityList(dto.attendanceDtoList);
-                            if (id != null && name != null && surname != null){
+                            if (id != null && name != null && surname != null && points != null){
                                 res.add(new StudentEntity(id, name, surname, points, attendanceEntityList));
                             }
                         }
-                        System.out.println(res);
+//                        System.out.println(res);
                         return res;
                     }
                     return null;

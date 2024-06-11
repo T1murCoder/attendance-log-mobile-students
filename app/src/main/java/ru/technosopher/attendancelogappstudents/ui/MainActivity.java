@@ -9,12 +9,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 import java.util.Map;
 
 import ru.technosopher.attendancelogappstudents.R;
+import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
 import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences;
 
@@ -57,15 +59,30 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
         if (destinationFragment == R.id.scanner) {
 
             navController.navigate(R.id.scannerFragment);
+            navigationBar.setItemSelected(R.id.scanner, true);
         }
         if (destinationFragment == R.id.group) {
 
             navController.navigate(R.id.groupFragment);
+            navigationBar.setItemSelected(R.id.group, true);
+
         }
         if (destinationFragment == R.id.profile) {
 
             navController.navigate(R.id.profileFragment);
+            navigationBar.setItemSelected(R.id.profile, true);
+
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateLogin();
+    }
+
+    public void updateLogin() {
+        CredentialsDataSource.getInstance().updateLogin(getPrefsLogin(), getPrefsPassword());
     }
 
     @Override
@@ -87,6 +104,15 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
         updateName(name);
         updateSurname(surname);
         updateRemember(remember);
+    }
+
+    @Override
+    public void profileUpdate(String name, String surname, String telegram, String github, String photo) {
+        updateName(name);
+        updateSurname(surname);
+        updateTelegram(telegram);
+        updateGithub(github);
+        updatePhoto(photo);
     }
 
     @Override

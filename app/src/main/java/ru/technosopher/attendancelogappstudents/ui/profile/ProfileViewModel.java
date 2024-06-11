@@ -18,10 +18,6 @@ public class ProfileViewModel extends ViewModel {
     private final MutableLiveData<Void> mutableLogoutLiveData = new MutableLiveData<>();
     public final LiveData<Void> logoutLiveData = mutableLogoutLiveData;
 
-    public final GetUserByIdUseCase getTeacherByIdUseCase = new GetUserByIdUseCase(
-            UserRepositoryImpl.getInstance()
-    );
-
     private final LogoutUseCase logoutUseCase = new LogoutUseCase(
             UserRepositoryImpl.getInstance()
     );
@@ -44,10 +40,6 @@ public class ProfileViewModel extends ViewModel {
 
     @Nullable
     private String photo;
-
-    public void updatePrefs() {
-        //TODO(SUFFER.............)
-    }
 
     public void loadPrefs(String id, String prefsLogin, String prefsName, String prefsSurname, String prefsTelegram, String prefsGithub, String prefsPhotoUrl) {
         // TODO(VALIDATION)
@@ -83,10 +75,10 @@ public class ProfileViewModel extends ViewModel {
                             github,
                             photo),
                     userstatus -> {
-                        System.out.println(userstatus.getStatusCode());
-                        System.out.println(userstatus.getValue());
+//                        System.out.println(userstatus.getStatusCode());
+//                        System.out.println(userstatus.getValue());
                         if (userstatus.getStatusCode() == 200) {
-                            loadPrefs(id, prefsLogin, name, surname, telegram, prefsLogin, photo);
+                            loadPrefs(id, prefsLogin, name, surname, telegram, github, photo);
                         } else {
                             mutableStateLiveData.postValue(new State("Что то пошло не так. Попробуйте еще раз", null, false));
                         }

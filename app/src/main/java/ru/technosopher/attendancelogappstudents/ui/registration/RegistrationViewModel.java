@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import ru.technosopher.attendancelogappstudents.data.UserRepositoryImpl;
+import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 import ru.technosopher.attendancelogappstudents.domain.sign.IsUserExistsUseCase;
 import ru.technosopher.attendancelogappstudents.domain.sign.LoginUserUseCase;
@@ -68,6 +69,7 @@ public class RegistrationViewModel extends ViewModel {
     }
 
     public void confirm() {
+        CredentialsDataSource.getInstance().logout();
         final String currentName = name;
         final String currentSurname = surname;
         final String currentLogin = login;
@@ -81,6 +83,7 @@ public class RegistrationViewModel extends ViewModel {
             return;
         }
         mutableLoadingLiveData.postValue(true);
+        CredentialsDataSource.getInstance().updateLogin(login, password);
         isUserExistsUseCase.execute(currentLogin, status -> {
             if (status.getErrors() != null || status.getValue() == null) {
                 System.out.println(status.getErrors().getLocalizedMessage());

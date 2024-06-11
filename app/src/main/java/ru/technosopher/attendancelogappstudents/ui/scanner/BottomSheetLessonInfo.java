@@ -34,7 +34,7 @@ public class BottomSheetLessonInfo extends BottomSheetDialogFragment {
             binding.scannedLessonTheme.setText(lessonTheme);
 
         } else {
-            // Do nothing, args is always not null
+            // Ничего не делаем, аргументы всегда не null
         }
 
 

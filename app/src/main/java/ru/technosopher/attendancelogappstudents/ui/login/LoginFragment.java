@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.ismaeldivita.chipnavigation.ChipNavigationBar;
+
 import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentLoginBinding;
 import ru.technosopher.attendancelogappstudents.ui.utils.OnChangeText;

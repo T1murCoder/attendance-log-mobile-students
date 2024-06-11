@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.squareup.picasso.Picasso;
 
 import ru.technosopher.attendancelogappstudents.R;
+import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentProfileBinding;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
@@ -147,6 +149,21 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onRefresh() {
                 viewModel.updateProfile(prefs.getPrefsId(), prefs.getPrefsLogin());
+                binding.profileGithubEt.setFocusable(false);
+                binding.profileGithubEt.setFocusableInTouchMode(false);
+                binding.profileGithubEt.setEnabled(false);
+
+                binding.profileSurnameEt.setFocusable(false);
+                binding.profileSurnameEt.setFocusableInTouchMode(false);
+                binding.profileSurnameEt.setEnabled(false);
+
+                binding.profileNameEt.setFocusable(false);
+                binding.profileNameEt.setFocusableInTouchMode(false);
+                binding.profileNameEt.setEnabled(false);
+
+                binding.profileTelegramEt.setFocusable(false);
+                binding.profileTelegramEt.setFocusableInTouchMode(false);
+                binding.profileTelegramEt.setEnabled(false);
             }
         });
 
@@ -164,28 +181,57 @@ public class ProfileFragment extends Fragment {
     }
     private void subscribe(ProfileViewModel viewModel){
         viewModel.stateLiveData.observe(getViewLifecycleOwner(), state -> {
-            UserEntity user = state.getUser();
+            if(Boolean.TRUE.equals(state.getLoading())){
+                binding.profileLoading.setVisibility(View.VISIBLE);
+                binding.profileContent.setVisibility(View.GONE);
+                binding.swipe.setEnabled(false);
+                binding.swipe.setVisibility(View.GONE);
+            }
+            else{
+                binding.swipe.setVisibility(View.VISIBLE);
+                binding.swipe.setEnabled(true);
+                binding.swipe.setRefreshing(false);
+                binding.profileLoading.setVisibility(View.GONE);
+                binding.profileContent.setVisibility(View.VISIBLE);
+                UserEntity user = state.getUser();
+                if (user != null){
+                    prefs.profileUpdate(
+                            user.getName(),
+                            user.getSurname(),
+                            user.getTelegram_url(),
+                            user.getGithub_url(),
+                            user.getPhoto_url()
+                    );
+                    binding.profileLoginTv.setText(user.getUsername());
+                    binding.profileNameEt.setText(user.getName());
+                    binding.profileSurnameEt.setText(user.getSurname());
+                    binding.profileTelegramEt.setText(user.getTelegram_url() != null ? user.getTelegram_url() : "Provide your telegram");
+                    binding.profileGithubEt.setText(user.getGithub_url() != null ? user.getGithub_url() : "Provide your github");
+                    // TODO (validate link)
+                    // TODO (FIREBASE SLANDER?????????)
+//                    if (user.getPhoto_url() != null)
+//                        Picasso.get().load(user.getPhoto_url()).into(binding.profileAvatarIv);
+                }else{
+                    Toast.makeText(getContext(), state.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    viewModel.loadPrefs(
+                            prefs.getPrefsId(),
+                            prefs.getPrefsLogin(),
+                            prefs.getPrefsName(),
+                            prefs.getPrefsSurname(),
+                            prefs.getPrefsTelegram(),
+                            prefs.getPrefsGithub(),
+                            prefs.getPrefsPhotoUrl()
+                    );
+                }
+            }
 
-            if (user == null) return;
-
-            binding.profileLoginTv.setText(user.getUsername());
-            binding.profileNameEt.setText(user.getName());
-            binding.profileSurnameEt.setText(user.getSurname());
-            binding.profileTelegramEt.setText(user.getTelegram_url() != null ? user.getTelegram_url() : "Provide your telegram");
-            binding.profileGithubEt.setText(user.getGithub_url() != null ? user.getGithub_url() : "Provide your github");
-            // TODO (validate link)
-            if (user.getPhoto_url() != null) Picasso.get().load(user.getPhoto_url()).into(binding.profileAvatarIv);
-
-            viewModel.logoutLiveData.observe(getViewLifecycleOwner(), unused -> {
-                prefs.clearAll();
-                View view = getView();
-                if (view == null) return;
-                Navigation.findNavController(view).navigate(R.id.action_profileFragment_to_loginFragment);
-//            Navigation.findNavController(view).navigate(
-//                    R.id.action_profileFragment_to_loginFragment,
-//                    null,
-//                    new NavOptions.Builder().setPopUpTo(R.id.profileFragment, true).build());
-            });
+        });
+        viewModel.logoutLiveData.observe(getViewLifecycleOwner(), unused -> {
+            prefs.clearAll();
+            View view = getView();
+            if (view == null) return;
+            //navigationBarChangeListener.changeSelectedItem(R.id.lessons);
+            Navigation.findNavController(view).navigate(R.id.action_profileFragment_to_loginFragment);
         });
     }
 
@@ -193,6 +239,13 @@ public class ProfileFragment extends Fragment {
     public void onDestroyView() {
         binding = null;
         super.onDestroyView();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        prefs = (UpdateSharedPreferences) requireContext();
+        CredentialsDataSource.getInstance().updateLogin(prefs.getPrefsLogin(), prefs.getPrefsPassword());
     }
 
     @Override

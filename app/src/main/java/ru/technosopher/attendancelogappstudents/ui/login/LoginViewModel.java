@@ -1,5 +1,7 @@
 package ru.technosopher.attendancelogappstudents.ui.login;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -7,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import ru.technosopher.attendancelogappstudents.data.UserRepositoryImpl;
+import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 import ru.technosopher.attendancelogappstudents.domain.sign.IsUserExistsUseCase;
 import ru.technosopher.attendancelogappstudents.domain.sign.LoginUserUseCase;
@@ -33,7 +36,7 @@ public class LoginViewModel extends ViewModel {
     IsUserExistsUseCase isTeacherExistsUseCase = new IsUserExistsUseCase(
             UserRepositoryImpl.getInstance()
     );
-    LoginUserUseCase loginTeacherUseCase = new LoginUserUseCase(
+    LoginUserUseCase loginUserUseCase = new LoginUserUseCase(
             UserRepositoryImpl.getInstance()
     );
     /*  USE CASES  */
@@ -48,6 +51,7 @@ public class LoginViewModel extends ViewModel {
     }
 
     public void confirm() {
+        CredentialsDataSource.getInstance().logout();
         final String currentLogin = login;
         final String currentPassword = password;
 
@@ -64,12 +68,13 @@ public class LoginViewModel extends ViewModel {
             return;
         }
         mutableLoadingLiveData.postValue(true);
+
         isTeacherExistsUseCase.execute(currentLogin, status -> {
             if (status.getErrors() != null || status.getValue() == null) {
-                System.out.println(status.getErrors().getLocalizedMessage());
+//                System.out.println(status.getErrors().getLocalizedMessage());
                 mutableLoadingLiveData.postValue(false);
                 mutableErrorLiveData.postValue("Something went wrong with server. Try again later");
-
+                Log.d("LOGIN_VIEWMODEL", "" + status.getStatusCode());
                 return;
             }
             if (status.getStatusCode() == 404) {
@@ -78,13 +83,13 @@ public class LoginViewModel extends ViewModel {
                 return;
             }
             if (status.getStatusCode() == 200) {
-                loginTeacher(currentLogin, currentPassword);
+                loginUser(currentLogin, currentPassword);
             }
         });
     }
 
-    private void loginTeacher(@NonNull final String currentLogin, @NonNull final String currentPassword) {
-        loginTeacherUseCase.execute(currentLogin, currentPassword, status -> {
+    private void loginUser(@NonNull final String currentLogin, @NonNull final String currentPassword) {
+        loginUserUseCase.execute(currentLogin, currentPassword, status -> {
             if (status.getErrors() == null && status.getStatusCode() == 200) {
 
                 login = currentLogin;

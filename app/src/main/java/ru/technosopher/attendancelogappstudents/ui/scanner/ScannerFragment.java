@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
 import ru.technosopher.attendancelogappstudents.R;
+import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentScannerBinding;
 import ru.technosopher.attendancelogappstudents.domain.entities.LessonEntity;
 import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
@@ -43,12 +44,9 @@ public class ScannerFragment extends Fragment {
     private ScannerViewModel viewModel;
     private FragmentScannerBinding binding;
     private View scannerView;
-    private View scannerResultView;
 
     private DecoratedBarcodeView barcodeView;
     private boolean isScanning = true;
-
-    private boolean isOverlayVisible;
 
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
         @Override
@@ -159,6 +157,13 @@ public class ScannerFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        prefs = (UpdateSharedPreferences) requireContext();
+        CredentialsDataSource.getInstance().updateLogin(prefs.getPrefsLogin(), prefs.getPrefsPassword());
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         Log.d(TAG, "Pausing scanner");
@@ -167,31 +172,4 @@ public class ScannerFragment extends Fragment {
         }
     }
 
-    private void showInfo() {
-        scannerResultView.setVisibility(View.VISIBLE);
-        Animation slideIn = AnimationUtils.loadAnimation(scannerView.getContext(), R.anim.slide_in);
-        scannerResultView.startAnimation(slideIn);
-
-        isOverlayVisible = true;
-    }
-
-    private void hideInfo() {
-        Animation slideOut = AnimationUtils.loadAnimation(scannerView.getContext(), R.anim.slide_out);
-        slideOut.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                scannerResultView.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-        scannerResultView.startAnimation(slideOut);
-        isOverlayVisible = false;
-    }
 }

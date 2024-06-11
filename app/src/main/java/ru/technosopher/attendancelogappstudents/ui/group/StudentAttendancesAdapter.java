@@ -89,12 +89,6 @@ public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAtten
 
             }
 
-            //TODO: Перенести сортировку во ViewModel
-//            List<AttendanceEntity> attendanceEntityList = item.getAttendanceEntityList()
-//                    .stream()
-//                    .sorted(Comparator.comparing(AttendanceEntity::getPoints))
-//                    .collect(Collectors.toList());
-
             binding.tvPoints.setText(item.getPoints());
 
             if (att) {

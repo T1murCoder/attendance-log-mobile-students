@@ -17,6 +17,7 @@ import ru.technosopher.attendancelogappstudents.data.GroupRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.data.StudentRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.domain.entities.AttendanceEntity;
 
+import ru.technosopher.attendancelogappstudents.domain.entities.GroupEntity;
 import ru.technosopher.attendancelogappstudents.domain.entities.StudentEntity;
 import ru.technosopher.attendancelogappstudents.domain.groups.GetGroupByStudentIdUseCase;
 import ru.technosopher.attendancelogappstudents.domain.groups.GetGroupNameByIdUseCase;
@@ -38,58 +39,50 @@ public class GroupViewModel extends ViewModel {
             StudentRepositoryImpl.getInstance()
     );
 
-    private final GetGroupNameByIdUseCase getGroupNameByIdUseCase = new GetGroupNameByIdUseCase(
-            GroupRepositoryImpl.getInstance()
-    );
-
     private final GetGroupByStudentIdUseCase getGroupByStudentIdUseCase = new GetGroupByStudentIdUseCase(
             GroupRepositoryImpl.getInstance()
     );
 
     /* USE CASES */
-    private String groupId;
+    private GroupEntity group;
+
     private List<StudentEntity> students = new ArrayList<>();
 
     // Передаём айди ученика
-    public void update(@NonNull String id) {
+    public void update(@Nullable String id) {
 
-        getGroupByStudentIdUseCase.execute(id, groupIdStatus -> {
-            if (groupIdStatus.getErrors() == null) {
-                groupId = groupIdStatus.getValue();
+        getGroupByStudentIdUseCase.execute(id, groupStatus -> {
+            Log.d(TAG, "" + id);
+            Log.d(TAG, "" + groupStatus.getValue());
+            Log.d(TAG, "" + groupStatus.getStatusCode());
 
-                if (groupId != null) {
+            if (groupStatus.getStatusCode() == 200) {
+                group = groupStatus.getValue();
+
+
+                if (group != null) {
                     mutableStateLiveData.postValue(new State(null, null, null, false, true));
-                    getStudentsAttendancesUseCase.execute(groupId, status -> {
-                        getGroupNameByIdUseCase.execute(groupId, groupNameStatus -> {
-                            if (groupNameStatus.getStatusCode() == 200 && groupNameStatus.getErrors() == null && groupNameStatus.getValue() != null) {
-                                List<StudentEntity> students = status.getValue() != null ? status.getValue() : null;
-                                List<StudentEntity> sortedOrNullStudents = sortAttendancesForStudents(students);
-                                List<StudentEntity> sortStudentsByPoints = sortStudentsByPoints(sortedOrNullStudents);
-                                Log.d(TAG, sortedOrNullStudents.toString());
-                                Log.d(TAG, sortedOrNullStudents.get(0).getPoints());
-                                this.students = sortStudentsByPoints;
-                                mutableStateLiveData.postValue(new State(groupNameStatus.getValue(), sortStudentsByPoints,
-                                        status.getErrors() != null ? status.getErrors().getLocalizedMessage() : null,
-                                        status.getErrors() == null && status.getValue() != null && !sortStudentsByPoints.isEmpty(), false));
-                            } else {
-
-                                System.out.println(status.getStatusCode());
-                                mutableErrorLiveData.postValue("Что-то пошло не так. Попробуйте еще раз");
-                            }
-                        });
+                    getStudentsAttendancesUseCase.execute(group.getId(), status -> {
+                        List<StudentEntity> students = status.getValue() != null ? status.getValue() : null;
+                        List<StudentEntity> sortedOrNullStudents = sortAttendancesForStudents(students);
+                        List<StudentEntity> studentsByPoints = sortStudentsByPoints(sortedOrNullStudents);
+                        Log.d(TAG, sortedOrNullStudents.toString());
+                        Log.d(TAG, sortedOrNullStudents.get(0).getPoints());
+                        this.students = studentsByPoints;
+                        mutableStateLiveData.postValue(new State(group.getName(), studentsByPoints,
+                                status.getErrors() != null ? status.getErrors().getLocalizedMessage() : null,
+                                status.getErrors() == null && status.getValue() != null && !studentsByPoints.isEmpty(), false));
                     });
 
                 } else {
                     mutableErrorLiveData.postValue("Вы не состоите в группе!");
-                    groupId = null;
+                    group = null;
                 }
             } else {
                 mutableErrorLiveData.postValue("Что-то пошло не так. Попробуйте еще раз");
-                groupId = null;
+                group = null;
             }
         });
-
-
     }
     private List<StudentEntity> sortAttendancesForStudents(@Nullable List<StudentEntity> students) {
         if (students == null) return new ArrayList<>();
@@ -125,17 +118,8 @@ public class GroupViewModel extends ViewModel {
         return this.students;
     }
 
-    public void saveGroupIdByStudentId(@NonNull String id) {
-        getGroupByStudentIdUseCase.execute(id, status -> {
-            if (status.getErrors() == null && status.getValue() != null) {
-                groupId = status.getValue();
-            } else {
-                mutableErrorLiveData.postValue("Вы не состоите в группе!");
-            }
-        });
-    }
-    public String getGroupId() {
-        return groupId;
+    public GroupEntity getGroup() {
+        return group;
     }
     public class State {
 
