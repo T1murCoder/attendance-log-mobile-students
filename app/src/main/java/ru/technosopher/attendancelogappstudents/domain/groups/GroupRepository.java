@@ -10,5 +10,5 @@ import ru.technosopher.attendancelogappstudents.domain.entities.Status;
 
 public interface GroupRepository {
     void getGroupNameById(@NonNull String id, Consumer<Status<String>> callback);
-    void getGroupByStudentId(@NonNull String id, Consumer<Status<String>> callback);
+    void getGroupByStudentId(@NonNull String id, Consumer<Status<GroupEntity>> callback);
 }

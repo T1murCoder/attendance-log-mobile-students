@@ -7,11 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
+import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentLoginBinding;
@@ -44,6 +47,7 @@ public class LoginFragment extends Fragment {
 
         try {
             navigationBarChangeListener.hideNavigationBar();
+
         } catch (ClassCastException ignored) {}
 
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -69,12 +73,26 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        binding.loginSignUpTv.setOnClickListener(new View.OnClickListener() {
+        binding.loginSignUpLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_registrationFragment);
             }
         });
+
+        binding.loginRememberCb.setChecked(prefs.getRemember());
+        if(prefs.getRemember()){
+            binding.loginLoginEt.setText(prefs.getPrefsLogin());
+            binding.loginPasswordEt.setText(prefs.getPrefsPassword());
+        }
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+            }
+        });
+
         subscribe(viewModel);
     }
 
@@ -99,8 +117,8 @@ public class LoginFragment extends Fragment {
                     state.getUser().getSurname(),
                     state.getUser().getTelegram_url(),
                     state.getUser().getGithub_url(),
-                    state.getUser().getPhoto_url()
-
+                    state.getUser().getPhoto_url(),
+                    binding.loginRememberCb.isChecked()
             );
         });
         viewModel.loadingLiveData.observe(getViewLifecycleOwner(), loading ->{

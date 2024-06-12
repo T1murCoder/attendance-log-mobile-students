@@ -1,5 +1,7 @@
 package ru.technosopher.attendancelogappstudents.ui.registration;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -7,12 +9,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import ru.technosopher.attendancelogappstudents.data.UserRepositoryImpl;
+import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 import ru.technosopher.attendancelogappstudents.domain.sign.IsUserExistsUseCase;
 import ru.technosopher.attendancelogappstudents.domain.sign.LoginUserUseCase;
 import ru.technosopher.attendancelogappstudents.domain.sign.RegisterUserUseCase;
 
 public class RegistrationViewModel extends ViewModel {
+    public static final String TAG = "REGISTRATION_VIEWMODEL";
     private final MutableLiveData<Void> mutableConfirmLiveData = new MutableLiveData<>();
     public final LiveData<Void> confirmLiveData = mutableConfirmLiveData;
     private final MutableLiveData<String> mutableErrorLiveData = new MutableLiveData<>();
@@ -68,6 +72,7 @@ public class RegistrationViewModel extends ViewModel {
     }
 
     public void confirm() {
+        CredentialsDataSource.getInstance().logout();
         final String currentName = name;
         final String currentSurname = surname;
         final String currentLogin = login;
@@ -81,9 +86,10 @@ public class RegistrationViewModel extends ViewModel {
             return;
         }
         mutableLoadingLiveData.postValue(true);
+;
         isUserExistsUseCase.execute(currentLogin, status -> {
             if (status.getErrors() != null || status.getValue() == null) {
-                System.out.println(status.getErrors().getLocalizedMessage());
+                Log.d(TAG, "" + status.getStatusCode());
                 mutableLoadingLiveData.postValue(false);
                 mutableErrorLiveData.postValue("Something went wrong with server. Try again later");
                 return;

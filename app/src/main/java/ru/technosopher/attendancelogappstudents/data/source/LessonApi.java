@@ -11,5 +11,8 @@ public interface LessonApi {
     Call<LessonDto> getLessonById(@Path("id") String id);
 
     @PUT("lesson/attendance/{lesson_id}/{student_id}")
-    Call<LessonDto> markAttended(@Path("lesson_id") String lessonId, @Path("student_id") String studentId);
+    Call<LessonDto> markAttendedByLessonId(@Path("lesson_id") String lessonId, @Path("student_id") String studentId);
+
+    @PUT("lesson/attendance/qrcode/{qr_code_id}/{student_id}")
+    Call<LessonDto> markAttendedByQRCodeId(@Path("qr_code_id") String qrCodeId, @Path("student_id") String studentId);
 }

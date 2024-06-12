@@ -10,7 +10,8 @@ import ru.technosopher.attendancelogappstudents.data.network.RetrofitFactory;
 import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.data.source.UserApi;
 import ru.technosopher.attendancelogappstudents.data.utils.CallToConsumer;
-import ru.technosopher.attendancelogappstudents.domain.UserRepository;
+import ru.technosopher.attendancelogappstudents.data.utils.Mapper;
+import ru.technosopher.attendancelogappstudents.domain.users.UserRepository;
 import ru.technosopher.attendancelogappstudents.domain.entities.ItemUserEntity;
 import ru.technosopher.attendancelogappstudents.domain.entities.Status;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserAccountEntity;
@@ -20,7 +21,7 @@ import ru.technosopher.attendancelogappstudents.domain.sign.SignUserRepository;
 public class UserRepositoryImpl implements UserRepository, SignUserRepository {
     private static UserRepositoryImpl INSTANCE;
 
-    private UserApi teacherApi = RetrofitFactory.getInstance().getUserApi();
+    private UserApi userApi = RetrofitFactory.getInstance().getUserApi();
 
     private CredentialsDataSource credentialsDataSource = CredentialsDataSource.getInstance();
 
@@ -41,9 +42,17 @@ public class UserRepositoryImpl implements UserRepository, SignUserRepository {
     }
 
     @Override
+    public void updateProfile(@NonNull String id, @NonNull UserEntity updatedUser, Consumer<Status<UserEntity>> callback) {
+        userApi.update(id, Mapper.fromUserEntityToDto(updatedUser)).enqueue(new CallToConsumer<>(
+                callback,
+                Mapper::fromUserDtoToEntity
+        ));
+    }
+
+    @Override
     public void getUser(@NonNull String id, Consumer<Status<UserEntity>> callback) {
-        teacherApi = RetrofitFactory.getInstance().getUserApi();
-        teacherApi.login().enqueue(new CallToConsumer<>(
+        userApi = RetrofitFactory.getInstance().getUserApi();
+        userApi.login().enqueue(new CallToConsumer<>(
                 callback,
                 user -> {
                     if (user != null){
@@ -68,7 +77,7 @@ public class UserRepositoryImpl implements UserRepository, SignUserRepository {
 
     @Override
     public void isExists(@NonNull String login, Consumer<Status<Void>> callback) {
-        teacherApi.isExists(login).enqueue(new CallToConsumer<>(
+        userApi.isExists(login).enqueue(new CallToConsumer<>(
                 callback,
                 dto -> null
         ));
@@ -79,7 +88,7 @@ public class UserRepositoryImpl implements UserRepository, SignUserRepository {
                                 @NonNull String password,
                                 @NonNull String name,
                                 @NonNull String surname, Consumer<Status<UserAccountEntity>> callback) {
-        teacherApi.register(new UserRegisterDto(login, password, name, surname)).enqueue(new CallToConsumer<>(
+        userApi.register(new UserRegisterDto(login, password, name, surname)).enqueue(new CallToConsumer<>(
                 callback,
                 userAcc -> {
                     if (userAcc != null){
@@ -100,8 +109,8 @@ public class UserRepositoryImpl implements UserRepository, SignUserRepository {
     @Override
     public void loginUser(@NonNull String login, @NonNull String password, Consumer<Status<UserEntity>> callback) {
         credentialsDataSource.updateLogin(login, password);
-        teacherApi = RetrofitFactory.getInstance().getUserApi();
-        teacherApi.login().enqueue(new CallToConsumer<>(
+        userApi = RetrofitFactory.getInstance().getUserApi();
+        userApi.login().enqueue(new CallToConsumer<>(
                 callback,
                 teacher -> {
                     if (teacher != null){

@@ -8,8 +8,10 @@ import java.util.List;
 
 import ru.technosopher.attendancelogappstudents.data.dto.AttendanceDto;
 import ru.technosopher.attendancelogappstudents.data.dto.StudentItemDto;
+import ru.technosopher.attendancelogappstudents.data.dto.UserDto;
 import ru.technosopher.attendancelogappstudents.domain.entities.AttendanceEntity;
 import ru.technosopher.attendancelogappstudents.domain.entities.ItemStudentEntity;
+import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 
 
 public class Mapper {
@@ -47,6 +49,23 @@ public class Mapper {
             entityList.add(fromAttendanceDtoToAttendanceEntity(dto));
         }
         return entityList;
+    }
+
+    public static UserDto fromUserEntityToDto(@NonNull UserEntity entity){
+        return new UserDto(
+                entity.getId(),
+                entity.getName(),
+                entity.getSurname(),
+                entity.getUsername(),
+                entity.getTelegram_url(),
+                entity.getGithub_url(),
+                entity.getPhoto_url());
+    }
+
+    public static UserEntity fromUserDtoToEntity(@NonNull UserDto dto){
+        if (dto == null) return null;
+        if (dto.id == null || dto.name == null || dto.surname == null || dto.username == null) return null;
+        return new UserEntity(dto.id, dto.name, dto.surname, dto.username, dto.telegram_url, dto.github_url, dto.photo_url);
     }
 
     private static AttendanceEntity fromAttendanceDtoToAttendanceEntity(AttendanceDto dto) {

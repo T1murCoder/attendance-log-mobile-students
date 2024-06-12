@@ -30,8 +30,17 @@ public class GroupEntity {
         return id;
     }
 
+
     @NonNull
     public List<ItemStudentEntity> getStudentList() {
         return studentList;
+    }
+    @Override
+    public String toString() {
+        return "GroupEntity{" +
+                "name='" + name + '\'' +
+                ", id='" + id + '\'' +
+                ", studentList=" + studentList +
+                '}';
     }
 }
