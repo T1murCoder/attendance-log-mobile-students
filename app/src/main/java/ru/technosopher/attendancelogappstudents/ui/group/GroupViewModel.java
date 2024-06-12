@@ -73,11 +73,13 @@ public class GroupViewModel extends ViewModel {
                                 status.getErrors() != null ? status.getErrors().getLocalizedMessage() : null,
                                 status.getErrors() == null && status.getValue() != null && !studentsByPoints.isEmpty(), false));
                     });
-
                 } else {
                     mutableErrorLiveData.postValue("Вы не состоите в группе!");
                     group = null;
                 }
+            } else if (groupStatus.getStatusCode() == 404){
+                mutableErrorLiveData.postValue("Вы не состоите в группе!");
+                group = null;
             } else {
                 mutableErrorLiveData.postValue("Что-то пошло не так. Попробуйте еще раз");
                 group = null;

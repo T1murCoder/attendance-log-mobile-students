@@ -74,7 +74,7 @@ public class LoginViewModel extends ViewModel {
 //                System.out.println(status.getErrors().getLocalizedMessage());
                 mutableLoadingLiveData.postValue(false);
                 mutableErrorLiveData.postValue("Something went wrong with server. Try again later");
-                Log.d("LOGIN_VIEWMODEL", "" + status.getStatusCode());
+//                Log.d("LOGIN_VIEWMODEL", "" + status.getStatusCode());
                 return;
             }
             if (status.getStatusCode() == 404) {

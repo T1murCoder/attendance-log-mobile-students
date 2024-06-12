@@ -116,7 +116,7 @@ public class ScannerFragment extends Fragment {
 
             Bundle info = new Bundle();
             info.putString(SCANNER_GROUP_NAME, lesson.getGroupName());
-            info.putString(SCANNER_LESSON_DATE, DateFormatter.getDateStringFromDate(lesson.getDate(), "dd.MM.YYYY"));
+            info.putString(SCANNER_LESSON_DATE, DateFormatter.getDateStringFromDate(lesson.getTimeStart(), "dd.MM.YYYY"));
             info.putString(SCANNER_LESSON_TIME, DateFormatter.getFullTimeStringFromDate(lesson.getTimeStart(), lesson.getTimeEnd(), "HH:mm"));
             info.putString(SCANNER_LESSON_THEME, lesson.getTheme());
 
