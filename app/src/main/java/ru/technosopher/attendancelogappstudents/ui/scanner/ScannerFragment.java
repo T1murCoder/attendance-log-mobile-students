@@ -74,6 +74,9 @@ public class ScannerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(ScannerViewModel.class);
         binding = FragmentScannerBinding.bind(view);
+        navigationBarChangeListener.changeSelectedItem(R.id.scanner);
+//        ChipNavigationBar chipNavigationBar = requireActivity().findViewById(R.id.bottom_navigation_bar);
+//        chipNavigationBar.setItemSelected(R.id.scanner, true);
 
         barcodeView = binding.barcodeScanner;
 
