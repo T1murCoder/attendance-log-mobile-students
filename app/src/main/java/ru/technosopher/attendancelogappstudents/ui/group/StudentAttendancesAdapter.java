@@ -87,6 +87,8 @@ public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAtten
                 binding.ivWreath.setVisibility(View.VISIBLE);
                 binding.ivWreath.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.drawable.laurel_wreath_bronze, context.getTheme()));
 
+            } else {
+                binding.ivWreath.setVisibility(View.GONE);
             }
 
             binding.tvPoints.setText(item.getPoints());
