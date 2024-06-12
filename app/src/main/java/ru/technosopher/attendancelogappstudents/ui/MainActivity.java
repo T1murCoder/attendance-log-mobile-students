@@ -9,12 +9,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 import java.util.Map;
 
 import ru.technosopher.attendancelogappstudents.R;
+import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
 import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences;
 
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
 
         navigationBar = findViewById(R.id.bottom_navigation_bar);
         navigationBar.setItemSelected(R.id.scanner, true);
-        System.out.println(navigationBar.getSelectedItemId());
+//        System.out.println(navigationBar.getSelectedItemId());
         navigationBar.setOnItemSelectedListener(destinationFragment -> {
             fragmentNavigation(0, destinationFragment);
         });
@@ -48,24 +50,39 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
 
     @Override
     public void changeSelectedItem(int r) {
-        navigationBar.setItemEnabled(r, true);
+        navigationBar.setItemSelected(r, true);
     }
 
 
     private void fragmentNavigation(int previousFragment, int destinationFragment) {
         navController = Navigation.findNavController(MainActivity.this, R.id.fragmentContainerView);
         if (destinationFragment == R.id.scanner) {
+
             navController.navigate(R.id.scannerFragment);
-//            navigationBar.setItemEnabled(R.id.lessons, true);
+            navigationBar.setItemSelected(R.id.scanner, true);
         }
         if (destinationFragment == R.id.group) {
+
             navController.navigate(R.id.groupFragment);
-//            navigationBar.setItemEnabled(R.id.groups, true);
+            navigationBar.setItemSelected(R.id.group, true);
+
         }
         if (destinationFragment == R.id.profile) {
+
             navController.navigate(R.id.profileFragment);
-//            navigationBar.setItemEnabled(R.id.profile, true);
+            navigationBar.setItemSelected(R.id.profile, true);
+
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateLogin();
+    }
+
+    public void updateLogin() {
+        CredentialsDataSource.getInstance().updateLogin(getPrefsLogin(), getPrefsPassword());
     }
 
     @Override
@@ -76,7 +93,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
                             String surname,
                             String telegram,
                             String github,
-                            String photo) {
+                            String photo,
+                            Boolean remember) {
         updateId(id);
         updateLogin(login);
         updatePassword(password);
@@ -85,7 +103,31 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
         updatePhoto(photo);
         updateName(name);
         updateSurname(surname);
+        updateRemember(remember);
     }
+
+    @Override
+    public void profileUpdate(String name, String surname, String telegram, String github, String photo) {
+        updateName(name);
+        updateSurname(surname);
+        updateTelegram(telegram);
+        updateGithub(github);
+        updatePhoto(photo);
+    }
+
+    @Override
+    public void clearAll() {
+        updateId("");
+        updateLogin("");
+        updatePassword("");
+        updateTelegram("");
+        updateGithub("");
+        updatePhoto("");
+        updateName("");
+        updateSurname("");
+        updateRemember(false);
+    }
+
 
     @Override
     public Map<String, ?> getPrefs() {
@@ -139,6 +181,12 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
     public String getPrefsSurname() {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         return sharedPref.getString(getString(R.string.SHARED_PREFS_SURNAME), null);
+    }
+
+    @Override
+    public Boolean getRemember() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getString(getString(R.string.SHARED_PREFS_CHECKED), "").equals("y");
     }
 
     @Override
@@ -203,5 +251,19 @@ public class MainActivity extends AppCompatActivity implements NavigationBarChan
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(getString(R.string.SHARED_PREFS_SURNAME), surname);
         editor.apply();
+    }
+
+    @Override
+    public void updateRemember(Boolean b) {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        String s = b ? "y" : "n";
+        editor.putString(getString(R.string.SHARED_PREFS_CHECKED), s);
+        editor.apply();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

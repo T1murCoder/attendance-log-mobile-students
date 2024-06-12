@@ -15,8 +15,6 @@ public interface GroupApi {
     @GET("group/{id}")
     Call<GroupDto> getGroupNameById(@Path("id") String id);
 
-//    @GET("group/student/{id}")
-//    Call<GroupDto> getGroupByStudentId(@Path("id") String id);
     @GET("group/student/{id}")
-    Call<String> getGroupByStudentId(@Path("id") String id);
+    Call<GroupDto> getGroupByStudentId(@Path("id") String id);
 }

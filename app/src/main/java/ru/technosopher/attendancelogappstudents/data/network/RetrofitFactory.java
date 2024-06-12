@@ -16,12 +16,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.technosopher.attendancelogappstudents.data.source.AttendanceApi;
 import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.data.source.GroupApi;
 import ru.technosopher.attendancelogappstudents.data.source.LessonApi;
@@ -62,15 +62,13 @@ public class RetrofitFactory {
             .create();
 
     private Retrofit retrofit = new Retrofit.Builder()
-//            .baseUrl("http://192.168.1.5:8080/")
-            .baseUrl("http://193.164.149.209:8080/")
+//            .baseUrl("http://192.168.1.5:8085/") // local server
+            .baseUrl("http://193.164.149.209:8085/") // remote server
             .client(client.build())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
 
     public UserApi getUserApi() {return retrofit.create(UserApi.class);}
-
-    public AttendanceApi getAttendanceApi() {return retrofit.create(AttendanceApi.class);}
 
     public LessonApi getLessonApi() {return retrofit.create(LessonApi.class);}
 
@@ -83,12 +81,15 @@ public class RetrofitFactory {
 
         @SuppressLint("SimpleDateFormat")
         private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
         @Override
         public GregorianCalendar deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             synchronized (dateFormat){
                 try{
+                    dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                     Date date = dateFormat.parse(json.getAsString());
                     GregorianCalendar calendar = new GregorianCalendar();
+                    calendar.setTimeZone(TimeZone.getDefault());
                     calendar.setTime(date);
                     return calendar;
                 }catch (ParseException e){
@@ -101,6 +102,7 @@ public class RetrofitFactory {
         @Override
         public JsonElement serialize(GregorianCalendar src, Type typeOfT, JsonSerializationContext context){
             synchronized (dateFormat){
+                dateFormat.setTimeZone(TimeZone.getDefault());
                 return context.serialize(dateFormat.format(src.getTime()));
             }
         }

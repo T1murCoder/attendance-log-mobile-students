@@ -10,8 +10,6 @@ import ru.technosopher.attendancelogappstudents.data.dto.StudentWithAttendances;
 
 public interface StudentApi {
 
-//    Call<List<StudentDto>> getStudentListByGroupId();
-
     @GET("student/group/{id}")
     Call<List<StudentWithAttendances>> getStudentWithAttendancesByGroupId(@Path("id") String id);
 

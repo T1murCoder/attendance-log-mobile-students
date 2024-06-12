@@ -2,9 +2,11 @@ package ru.technosopher.attendancelogappstudents.ui.group;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,11 +14,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import ru.technosopher.attendancelogappstudents.R;
+import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentGroupBinding;
 import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeListener;
 import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences;
 
 public class GroupFragment extends Fragment {
+    public static final String TAG = "GROUP_FRAGMENT";
     private FragmentGroupBinding binding;
     private UpdateSharedPreferences prefs;
     private GroupViewModel viewModel;
@@ -36,10 +40,12 @@ public class GroupFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentGroupBinding.bind(view);
+        prefs = (UpdateSharedPreferences) requireContext();
+//        Toast.makeText(requireContext(), "OnViewCreated", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, prefs.getPrefsId());
 
 
         viewModel = new ViewModelProvider(this).get(GroupViewModel.class);
-        viewModel.saveGroupIdByStudentId(prefs.getPrefsId()); //КОСТЫЛЬ!!!!!!!
 
         StudentAttendancesAdapter attendancesAdapter = new StudentAttendancesAdapter(getContext(), true);
         DatesAdapter datesAdapter = new DatesAdapter();
@@ -68,7 +74,15 @@ public class GroupFragment extends Fragment {
         binding.datesRv.setAdapter(datesAdapter);
 
         subscribe(viewModel, attendancesAdapter, datesAdapter);
-        viewModel.update(prefs.getPrefsId()); //КОСТЫЛЬ, ПРОСТИТЕ
+        viewModel.update(prefs.getPrefsId());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        prefs = (UpdateSharedPreferences) requireContext();
+        CredentialsDataSource.getInstance().updateLogin(prefs.getPrefsLogin(), prefs.getPrefsPassword());
+        viewModel.update(prefs.getPrefsId());
     }
 
     private void subscribe(GroupViewModel viewModel, StudentAttendancesAdapter attendancesAdapter, DatesAdapter datesAdapter) {
@@ -130,4 +144,11 @@ public class GroupFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        viewModel.saveGroupIdByStudentId(prefs.getPrefsId());
+//        Toast.makeText(requireContext(), "OnResume", Toast.LENGTH_SHORT).show();
+    }
 }

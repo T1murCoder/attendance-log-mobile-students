@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 import ru.technosopher.attendancelogappstudents.data.LessonRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.domain.entities.LessonEntity;
@@ -49,8 +50,8 @@ public class ScannerViewModel extends ViewModel {
         mutableLessonLiveData.postValue(new LessonState(null, null, false, true));
     }
 
-    public void markAttended(@NonNull String lessonId, @NonNull String studentId) {
-        addAttendanceUseCase.execute(lessonId, studentId, status -> {
+    public void markAttended(@NonNull String qrCodeId, @NonNull String studentId) {
+        addAttendanceUseCase.execute(qrCodeId, studentId, status -> {
             if (status.getStatusCode() == 200 && status.getErrors() == null) {
                 if (status.getValue() != null) {
                     mutableLessonLiveData.postValue(fromLessonStatus(status));
@@ -59,6 +60,7 @@ public class ScannerViewModel extends ViewModel {
                 // TODO: Add Error
                 mutableLessonLiveData.postValue(fromLessonStatus(status));
                 Log.d(TAG, "Something going wrong");
+                Log.d(TAG, "" + status.getStatusCode());
 //                Log.d(TAG, status.getErrors().getMessage());
                 clearAllFields();
             }

@@ -67,14 +67,6 @@ public class PointsAdapter extends RecyclerView.Adapter<PointsAdapter.ViewHolder
             Integer point = Math.round(Float.valueOf(item.getPoints()));
             if (point == 0) binding.pointEt.setHint(String.valueOf(point));
             else binding.pointEt.setText(String.valueOf(point));
-
-            binding.pointEt.addTextChangedListener(new OnChangeText() {
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    super.afterTextChanged(editable);
-                    //TODO (entered data validation)
-                }
-            });
         }
     }
 }

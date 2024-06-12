@@ -2,16 +2,22 @@ package ru.technosopher.attendancelogappstudents.data;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import ru.technosopher.attendancelogappstudents.data.dto.GroupDto;
+import ru.technosopher.attendancelogappstudents.data.dto.StudentDto;
+import ru.technosopher.attendancelogappstudents.data.dto.StudentItemDto;
 import ru.technosopher.attendancelogappstudents.data.network.RetrofitFactory;
 import ru.technosopher.attendancelogappstudents.data.source.GroupApi;
 import ru.technosopher.attendancelogappstudents.data.utils.CallToConsumer;
 import ru.technosopher.attendancelogappstudents.data.utils.Mapper;
 import ru.technosopher.attendancelogappstudents.domain.entities.GroupEntity;
 import ru.technosopher.attendancelogappstudents.domain.entities.ItemGroupEntity;
+import ru.technosopher.attendancelogappstudents.domain.entities.ItemStudentEntity;
 import ru.technosopher.attendancelogappstudents.domain.entities.Status;
+import ru.technosopher.attendancelogappstudents.domain.entities.StudentEntity;
 import ru.technosopher.attendancelogappstudents.domain.groups.GroupRepository;
 
 public class GroupRepositoryImpl implements GroupRepository {
@@ -40,12 +46,19 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public void getGroupByStudentId(@NonNull String id, Consumer<Status<String>> callback) {
+    public void getGroupByStudentId(@NonNull String id, Consumer<Status<GroupEntity>> callback) {
         groupApi.getGroupByStudentId(id).enqueue(new CallToConsumer<>(
                 callback,
                 group -> {
                     if (group != null) {
-                        return group;
+                        final String groupId = group.id;
+                        final String groupName = group.name;
+                        final List<StudentItemDto> studentDtoList = group.studentList;
+                        if (groupId != null && groupName != null && studentDtoList != null) {
+
+                            final List<ItemStudentEntity> itemStudentEntityList = Mapper.fromDtoListToEntityList(studentDtoList);
+                            return new GroupEntity(groupName, groupId, itemStudentEntityList);
+                        }
                     }
                     return null;
                 }
