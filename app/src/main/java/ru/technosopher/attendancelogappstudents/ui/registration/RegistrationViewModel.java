@@ -89,7 +89,7 @@ public class RegistrationViewModel extends ViewModel {
 ;
         isUserExistsUseCase.execute(currentLogin, status -> {
             if (status.getErrors() != null || status.getValue() == null) {
-                Log.d(TAG, "" + status.getStatusCode());
+//                Log.d(TAG, "" + status.getStatusCode());
                 mutableLoadingLiveData.postValue(false);
                 mutableErrorLiveData.postValue("Something went wrong with server. Try again later");
                 return;

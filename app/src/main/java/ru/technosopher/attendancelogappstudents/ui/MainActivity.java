@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 import java.util.Map;

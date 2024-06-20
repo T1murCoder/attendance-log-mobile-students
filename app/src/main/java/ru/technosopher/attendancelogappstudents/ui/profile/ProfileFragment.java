@@ -1,6 +1,9 @@
 package ru.technosopher.attendancelogappstudents.ui.profile;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -8,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -15,6 +20,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import ru.technosopher.attendancelogappstudents.R;
@@ -33,6 +42,23 @@ public class ProfileFragment extends Fragment {
 
     private ProfileViewModel viewModel;
 
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference storageRef = storage.getReference();
+    private Uri userAvatarUri;
+
+    private ActivityResultLauncher<Intent> pickImageActivity = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    if (result.getData() != null) {
+                        userAvatarUri = result.getData().getData();
+                        Glide.with(this).load(userAvatarUri).into(binding.profileAvatarIv);
+                        viewModel.uploadAvatar(prefs.getPrefsId(), prefs.getPrefsLogin(), userAvatarUri);
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show();
+                }
+            });
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +75,10 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.bind(view);
 
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+
+        binding.profileNewImageFab.setOnClickListener(v -> {
+            imageChooser();
+        });
 
         binding.profileLogoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,6 +237,9 @@ public class ProfileFragment extends Fragment {
                     binding.profileSurnameEt.setText(user.getSurname());
                     binding.profileTelegramEt.setText(user.getTelegram_url() != null ? user.getTelegram_url() : "Provide your telegram");
                     binding.profileGithubEt.setText(user.getGithub_url() != null ? user.getGithub_url() : "Provide your github");
+                    if (user.getPhoto_url() != null) {
+                        loadAvatar(user.getPhoto_url());
+                    }
                     // TODO (validate link)
                     // TODO (FIREBASE SLANDER?????????)
 //                    if (user.getPhoto_url() != null)
@@ -232,6 +265,25 @@ public class ProfileFragment extends Fragment {
             if (view == null) return;
             //navigationBarChangeListener.changeSelectedItem(R.id.lessons);
             Navigation.findNavController(view).navigate(R.id.action_profileFragment_to_loginFragment);
+        });
+    }
+
+    private void imageChooser() {
+        // TODO: Сделать кроп изображения?
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+
+        pickImageActivity.launch(i);
+    }
+
+    private void loadAvatar(String imageUrl) {
+        StorageReference imageRef = storageRef.child(imageUrl);
+
+        imageRef.getDownloadUrl().addOnCompleteListener(task -> {
+            if (task != null && task.getResult() != null) {
+                Glide.with(requireContext()).load(task.getResult()).into(binding.profileAvatarIv);
+            }
         });
     }
 
