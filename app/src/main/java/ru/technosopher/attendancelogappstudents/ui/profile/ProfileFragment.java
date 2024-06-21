@@ -3,6 +3,7 @@ package ru.technosopher.attendancelogappstudents.ui.profile;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -21,6 +22,11 @@ import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.canhub.cropper.CropImage;
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
+import com.canhub.cropper.CropImageView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -59,6 +65,17 @@ public class ProfileFragment extends Fragment {
                 }
             });
 
+    private ActivityResultLauncher<CropImageContractOptions> cropImageActivity = registerForActivityResult(new CropImageContract(),
+            result -> {
+                if (result.isSuccessful()) {
+                    userAvatarUri = result.getUriContent();
+                    Glide.with(this).load(userAvatarUri).into(binding.profileAvatarIv);
+                    viewModel.uploadAvatar(prefs.getPrefsId(), prefs.getPrefsLogin(), userAvatarUri);
+                } else {
+                    Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show();
+                }
+            });
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +94,8 @@ public class ProfileFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
         binding.profileNewImageFab.setOnClickListener(v -> {
-            imageChooser();
+//            imageChooser();
+            startCrop();
         });
 
         binding.profileLogoutBtn.setOnClickListener(new View.OnClickListener() {
@@ -267,14 +285,29 @@ public class ProfileFragment extends Fragment {
             Navigation.findNavController(view).navigate(R.id.action_profileFragment_to_loginFragment);
         });
     }
-
+    
     private void imageChooser() {
-        // TODO: Сделать кроп изображения?
         Intent i = new Intent();
         i.setType("image/*");
         i.setAction(Intent.ACTION_GET_CONTENT);
 
         pickImageActivity.launch(i);
+    }
+
+    private void startCrop() {
+        CropImageOptions options = new CropImageOptions();
+        options.imageSourceIncludeCamera = false;
+        options.imageSourceIncludeGallery = true;
+        options.aspectRatioX = 1;
+        options.aspectRatioY = 1;
+        options.cropShape = CropImageView.CropShape.RECTANGLE;
+        options.fixAspectRatio = true;
+        options.showCropOverlay = true;
+        options.outputCompressFormat = Bitmap.CompressFormat.PNG;
+
+        CropImageContractOptions cropOptions = new CropImageContractOptions(null, options);
+
+        cropImageActivity.launch(cropOptions);
     }
 
     private void loadAvatar(String imageUrl) {

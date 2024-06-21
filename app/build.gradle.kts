@@ -49,6 +49,9 @@ dependencies {
     implementation("androidx.activity:activity:1.9.0")
     implementation("com.squareup.picasso:picasso:2.8")
 
+    // image cropper
+    implementation("com.vanniktech:android-image-cropper:4.5.0")
+
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-analytics")
