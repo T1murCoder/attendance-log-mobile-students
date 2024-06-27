@@ -133,16 +133,16 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public void changeName(String name){
-        this.name = name;
+        this.name = name.trim();
     }
     public void changeSurname(String surname){
-        this.surname = surname;
+        this.surname = surname.trim();
     }
     public void changeTelegram(String telegram){
-        this.telegram = telegram;
+        this.telegram = telegram.trim();
     }
     public void changeGithub(String github){
-        this.github = github;
+        this.github = github.trim();
     }
     public void changePhoto(String photo) {this.photo = photo;}
 

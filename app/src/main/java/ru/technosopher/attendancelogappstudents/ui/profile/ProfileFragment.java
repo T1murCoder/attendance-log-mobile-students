@@ -31,6 +31,7 @@ import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
+import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -304,10 +305,14 @@ public class ProfileFragment extends Fragment {
         StorageReference imageRef = storageRef.child(imageUrl);
 
         imageRef.getDownloadUrl().addOnCompleteListener(task -> {
-            if (task != null && task.getResult() != null && task.isSuccessful()) {
-                Glide.with(requireContext()).load(task.getResult()).into(binding.profileAvatarIv);
+            try {
+                if (task != null && task.getResult() != null && task.isSuccessful()) {
+                    Glide.with(requireContext()).load(task.getResult()).into(binding.profileAvatarIv);
+                }
+                Log.d(TAG, "loadAvatar: " + task.isSuccessful());
+            } catch (RuntimeExecutionException e) {
+                Log.d(TAG, "loadAvatar: " + false);
             }
-            Log.d(TAG, "loadAvatar: " + task.isSuccessful());
         }).addOnFailureListener(e -> {
             Log.d(TAG, "loadAvatar: " + false);
         }).addOnCanceledListener(() -> {

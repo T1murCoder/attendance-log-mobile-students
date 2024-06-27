@@ -56,19 +56,19 @@ public class RegistrationViewModel extends ViewModel {
 
 
     public void changeLogin(String login) {
-        this.login = login;
+        this.login = login.trim();
     }
 
     public void changeName(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
     public void changeSurname(String surname) {
-        this.surname = surname;
+        this.surname = surname.trim();
     }
 
     public void changePassword(String password) {
-        this.password = password;
+        this.password = password.trim();
     }
 
     public void confirm() {
