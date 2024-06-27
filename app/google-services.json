@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "779811271303",
-    "project_id": "warm-now-381709",
-    "storage_bucket": "warm-now-381709.appspot.com"
+    "project_number": "406155840886",
+    "project_id": "tuton-cdn",
+    "storage_bucket": "tuton-cdn.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:779811271303:android:4c18ee4106fe6b73b53e22",
+        "mobilesdk_app_id": "1:406155840886:android:92dde7394e4af601fd7e57",
         "android_client_info": {
-          "package_name": "ru.technosopher.attendancelogappstudents"
+          "package_name": "ru.technosopher.attendancelogapp"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBe_3-ocBO4L8BUXl_RHG8O6r6EhNl45xc"
+          "current_key": ""
         }
       ],
       "services": {
@@ -26,15 +26,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:779811271303:android:a9d989d925fde584b53e22",
+        "mobilesdk_app_id": "1:406155840886:android:e769967a84b81cfafd7e57",
         "android_client_info": {
-          "package_name": "ru.technosopher.firebasetest"
+          "package_name": "ru.technosopher.attendancelogappstudents"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBe_3-ocBO4L8BUXl_RHG8O6r6EhNl45xc"
+          "current_key": ""
         }
       ],
       "services": {

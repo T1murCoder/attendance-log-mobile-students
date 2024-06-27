@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+
 import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.databinding.FragmentProfileBinding;
@@ -42,28 +45,17 @@ import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences
 
 public class ProfileFragment extends Fragment {
 
+    public static final String TAG = "PROFILE_FRAGMENT";
     private NavigationBarChangeListener navigationBarChangeListener;
     private UpdateSharedPreferences prefs;
     private FragmentProfileBinding binding;
 
     private ProfileViewModel viewModel;
 
+    // TODO: Тут сделать, чтобы сохранялись две аватарки: побольше и миниатюра, в профиль загружаем побольше, а в таблице миниатюры
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference storageRef = storage.getReference();
     private Uri userAvatarUri;
-
-    private ActivityResultLauncher<Intent> pickImageActivity = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    if (result.getData() != null) {
-                        userAvatarUri = result.getData().getData();
-                        Glide.with(this).load(userAvatarUri).into(binding.profileAvatarIv);
-                        viewModel.uploadAvatar(prefs.getPrefsId(), prefs.getPrefsLogin(), userAvatarUri);
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show();
-                }
-            });
 
     private ActivityResultLauncher<CropImageContractOptions> cropImageActivity = registerForActivityResult(new CropImageContract(),
             result -> {
@@ -75,6 +67,11 @@ public class ProfileFragment extends Fragment {
                     Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show();
                 }
             });
+
+    //TODO: Сжатие изображений
+//    private Bitmap compressImage(Uri image) {
+//
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,7 +91,6 @@ public class ProfileFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
         binding.profileNewImageFab.setOnClickListener(v -> {
-//            imageChooser();
             startCrop();
         });
 
@@ -258,10 +254,6 @@ public class ProfileFragment extends Fragment {
                     if (user.getPhoto_url() != null) {
                         loadAvatar(user.getPhoto_url());
                     }
-                    // TODO (validate link)
-                    // TODO (FIREBASE SLANDER?????????)
-//                    if (user.getPhoto_url() != null)
-//                        Picasso.get().load(user.getPhoto_url()).into(binding.profileAvatarIv);
                 }else{
                     Toast.makeText(getContext(), state.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     viewModel.loadPrefs(
@@ -285,14 +277,6 @@ public class ProfileFragment extends Fragment {
             Navigation.findNavController(view).navigate(R.id.action_profileFragment_to_loginFragment);
         });
     }
-    
-    private void imageChooser() {
-        Intent i = new Intent();
-        i.setType("image/*");
-        i.setAction(Intent.ACTION_GET_CONTENT);
-
-        pickImageActivity.launch(i);
-    }
 
     private void startCrop() {
         CropImageOptions options = new CropImageOptions();
@@ -314,10 +298,16 @@ public class ProfileFragment extends Fragment {
         StorageReference imageRef = storageRef.child(imageUrl);
 
         imageRef.getDownloadUrl().addOnCompleteListener(task -> {
-            if (task != null && task.getResult() != null) {
+            if (task != null && task.getResult() != null && task.isSuccessful()) {
                 Glide.with(requireContext()).load(task.getResult()).into(binding.profileAvatarIv);
             }
+            Log.d(TAG, "loadAvatar: " + task.isSuccessful());
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "loadAvatar: " + false);
+        }).addOnCanceledListener(() -> {
+            Log.d(TAG, "loadAvatar: " + false);
         });
+
     }
 
     @Override

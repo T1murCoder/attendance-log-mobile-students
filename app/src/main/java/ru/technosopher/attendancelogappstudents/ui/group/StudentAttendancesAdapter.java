@@ -27,9 +27,11 @@ public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAtten
 
     private boolean state = true;
     private final Context context;
-    public StudentAttendancesAdapter(Context context, boolean state) {
+    private final Consumer<String> onItemClick;
+    public StudentAttendancesAdapter(Context context, boolean state, Consumer<String> onItemClick) {
         this.context = context;
         this.state = state;
+        this.onItemClick = onItemClick;
     }
 
     @NonNull
@@ -74,6 +76,9 @@ public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAtten
         }
 
         public void bind(StudentEntity item, boolean att, int position) {
+            binding.getRoot().setOnClickListener(v -> {
+                onItemClick.accept(item.getId());
+            });
             binding.tableStudentName.setText(item.getFullName());
             binding.tvPlace.setText(Integer.toString(position + 1));
 

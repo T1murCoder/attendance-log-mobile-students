@@ -22,6 +22,7 @@ import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeList
 import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences;
 
 public class MainActivity extends AppCompatActivity implements NavigationBarChangeListener, UpdateSharedPreferences {
+    public static final String FIREBASE_AVATAR_PREFIX = "images/avatar_";
 
     private NavController navController;
     private ChipNavigationBar navigationBar;

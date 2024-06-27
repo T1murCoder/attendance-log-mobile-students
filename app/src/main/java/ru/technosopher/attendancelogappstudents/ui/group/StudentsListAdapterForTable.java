@@ -9,13 +9,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import ru.technosopher.attendancelogappstudents.databinding.DummyItemListBinding;
 import ru.technosopher.attendancelogappstudents.domain.entities.StudentEntity;
 
 
 public class StudentsListAdapterForTable extends RecyclerView.Adapter<StudentsListAdapterForTable.ViewHolder> {
+    private final Consumer<String> onItemClick;
     private final List<StudentEntity> data = new ArrayList<>();
+
+    public StudentsListAdapterForTable(Consumer<String> onItemClick) {
+        this.onItemClick = onItemClick;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -51,6 +58,10 @@ public class StudentsListAdapterForTable extends RecyclerView.Adapter<StudentsLi
 
         public void bind(StudentEntity item) {
             binding.studentName.setText(item.getFullName());
+            // TODO: Ставить миниатюры аватарок
+            binding.getRoot().setOnClickListener(v -> {
+                onItemClick.accept(item.getId());
+            });
         }
     }
 }

@@ -61,6 +61,9 @@
         <action
             android:id="@+id/action_groupFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_studentProfileFragment"
+            app:destination="@id/studentProfileFragment" />
     </fragment>
 
     <fragment
@@ -79,6 +82,18 @@
         <action
             android:id="@+id/action_profileFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/studentProfileFragment"
+        android:name="ru.technosopher.attendancelogappstudents.ui.studentprofile.StudentProfileFragment"
+        android:label="StudentProfileFragment"
+        tools:layout="@layout/fragment_student_profile">
+
+
+        <action
+            android:id="@+id/action_studentProfileFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
     </fragment>
 
 
