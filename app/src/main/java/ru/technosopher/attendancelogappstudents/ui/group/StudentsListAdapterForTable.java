@@ -58,7 +58,7 @@ public class StudentsListAdapterForTable extends RecyclerView.Adapter<StudentsLi
 
         public void bind(StudentEntity item) {
             binding.studentName.setText(item.getFullName());
-            // TODO: Ставить миниатюры аватарок
+
             binding.getRoot().setOnClickListener(v -> {
                 onItemClick.accept(item.getId());
             });

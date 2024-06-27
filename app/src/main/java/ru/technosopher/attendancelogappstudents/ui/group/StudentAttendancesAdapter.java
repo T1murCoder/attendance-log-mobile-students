@@ -2,6 +2,7 @@ package ru.technosopher.attendancelogappstudents.ui.group;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,7 +29,10 @@ import ru.technosopher.attendancelogappstudents.domain.entities.StudentEntity;
 public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAttendancesAdapter.ViewHolder> {
     private final List<StudentEntity> data = new ArrayList<>();
 
+    public static final String TAG = "STUDENT_ATTENDANCES_ADAPTER";
+
     private boolean state = true;
+
     private final Context context;
     private final Consumer<String> onItemClick;
     public StudentAttendancesAdapter(Context context, boolean state, Consumer<String> onItemClick) {
@@ -76,7 +83,7 @@ public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAtten
         }
 
         public void bind(StudentEntity item, boolean att, int position) {
-            binding.getRoot().setOnClickListener(v -> {
+            binding.studentInfoBox.setOnClickListener(v -> {
                 onItemClick.accept(item.getId());
             });
             binding.tableStudentName.setText(item.getFullName());

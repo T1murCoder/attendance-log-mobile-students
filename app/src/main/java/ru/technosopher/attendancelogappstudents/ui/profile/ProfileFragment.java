@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.FutureTarget;
 import com.canhub.cropper.CropImage;
 import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
@@ -33,7 +36,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.util.concurrent.ExecutionException;
 
 import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
@@ -51,8 +59,6 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
 
     private ProfileViewModel viewModel;
-
-    // TODO: Тут сделать, чтобы сохранялись две аватарки: побольше и миниатюра, в профиль загружаем побольше, а в таблице миниатюры
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference storageRef = storage.getReference();
     private Uri userAvatarUri;
@@ -60,18 +66,18 @@ public class ProfileFragment extends Fragment {
     private ActivityResultLauncher<CropImageContractOptions> cropImageActivity = registerForActivityResult(new CropImageContract(),
             result -> {
                 if (result.isSuccessful()) {
-                    userAvatarUri = result.getUriContent();
-                    Glide.with(this).load(userAvatarUri).into(binding.profileAvatarIv);
-                    viewModel.uploadAvatar(prefs.getPrefsId(), prefs.getPrefsLogin(), userAvatarUri);
+                    try {
+                        userAvatarUri = result.getUriContent();
+                        Glide.with(this).load(userAvatarUri).into(binding.profileAvatarIv);
+                        viewModel.uploadAvatar(prefs.getPrefsId(), prefs.getPrefsLogin(), userAvatarUri);
+                    } catch (Exception e) {
+                        Log.d(TAG, "Something goes wrong: " + String.valueOf(e));
+                        Toast.makeText(requireContext(), "Что-то пошло не так", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show();
                 }
             });
-
-    //TODO: Сжатие изображений
-//    private Bitmap compressImage(Uri image) {
-//
-//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

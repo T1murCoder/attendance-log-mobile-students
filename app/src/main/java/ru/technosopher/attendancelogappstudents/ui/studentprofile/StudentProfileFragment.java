@@ -131,7 +131,10 @@ public class StudentProfileFragment extends Fragment {
             Log.d(TAG, "loadAvatar: " + task.isSuccessful());
         }).addOnFailureListener(e -> {
             Log.d(TAG, "loadAvatar: " + false);
+        }).addOnCanceledListener(() -> {
+            Log.d(TAG, "loadAvatar: " + false);
         });
+
     }
 
     private void setClipboard(String text) {

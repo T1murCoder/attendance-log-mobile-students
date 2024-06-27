@@ -78,7 +78,6 @@ public class ProfileViewModel extends ViewModel {
 
     public void uploadAvatar(String id, String prefsLogin, Uri image) {
         if (image != null) {
-            //TODO: Сделать сжатие изображения
             StorageReference imageRef = storageRef.child(FIREBASE_AVATAR_PREFIX + id + ".png");
 
             imageRef.putFile(image).addOnSuccessListener(taskSnapshot -> {
@@ -109,7 +108,6 @@ public class ProfileViewModel extends ViewModel {
         if (name == null || surname == null || name.isEmpty() || surname.isEmpty()) {
             mutableStateLiveData.postValue(new State("Имя и фамилия не могут быть пустыми", null, false));
         } else {
-            //TODO(fix untouched fields update)
             mutableStateLiveData.postValue(new State(null, null, true));
             updateUserProfileUseCase.execute(
                     id,
