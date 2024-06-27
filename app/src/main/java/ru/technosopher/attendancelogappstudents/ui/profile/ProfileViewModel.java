@@ -139,10 +139,10 @@ public class ProfileViewModel extends ViewModel {
         this.surname = surname.trim();
     }
     public void changeTelegram(String telegram){
-        this.telegram = telegram.trim();
+        this.telegram = telegram;
     }
     public void changeGithub(String github){
-        this.github = github.trim();
+        this.github = github;
     }
     public void changePhoto(String photo) {this.photo = photo;}
 
