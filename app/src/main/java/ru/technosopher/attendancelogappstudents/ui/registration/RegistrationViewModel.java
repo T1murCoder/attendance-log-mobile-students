@@ -56,19 +56,19 @@ public class RegistrationViewModel extends ViewModel {
 
 
     public void changeLogin(String login) {
-        this.login = login;
+        this.login = login.trim();
     }
 
     public void changeName(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
     public void changeSurname(String surname) {
-        this.surname = surname;
+        this.surname = surname.trim();
     }
 
     public void changePassword(String password) {
-        this.password = password;
+        this.password = password.trim();
     }
 
     public void confirm() {
@@ -89,7 +89,7 @@ public class RegistrationViewModel extends ViewModel {
 ;
         isUserExistsUseCase.execute(currentLogin, status -> {
             if (status.getErrors() != null || status.getValue() == null) {
-                Log.d(TAG, "" + status.getStatusCode());
+//                Log.d(TAG, "" + status.getStatusCode());
                 mutableLoadingLiveData.postValue(false);
                 mutableErrorLiveData.postValue("Something went wrong with server. Try again later");
                 return;

@@ -128,6 +128,8 @@ public class ScannerFragment extends Fragment {
 
             bottomSheetLessonInfo.show(requireActivity().getSupportFragmentManager(), TAG);
 
+            Toast.makeText(requireContext(), "Вы успешно отметились на уроке!", Toast.LENGTH_SHORT).show();
+
             binding.btnRefreshScan.setVisibility(View.VISIBLE);
         });
     }
