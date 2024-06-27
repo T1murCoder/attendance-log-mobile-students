@@ -46,6 +46,7 @@
                 android:ems="10"
                 android:hint="@string/login_et_hint"
                 android:textCursorDrawable="@color/main_gray"
+                android:backgroundTint="@color/white"
                 android:textColor="@color/black"
                 android:inputType="text"
                 android:padding="20dp"
@@ -59,6 +60,8 @@
                 app:hintEnabled="false"
                 android:paddingStart="6dp"
                 android:background="@drawable/action_elements_background"
+                android:backgroundTint="@color/white"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="@color/main_gray">
@@ -70,6 +73,8 @@
                     android:background="@drawable/action_elements_background"
                     android:hint="@string/password_edit_text_hint"
                     android:inputType="textPassword"
+                    android:backgroundTint="@color/white"
+
                     android:textColorHint="@color/main_gray"
                     android:textCursorDrawable="@color/main_gray"
                     android:textColor="@color/black"

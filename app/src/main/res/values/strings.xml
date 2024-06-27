@@ -39,4 +39,36 @@
     <string name="table_group_name_header">Название группы</string>
     <string name="login_et_hint">Логин</string>
     <string name="SHARED_PREFS_CHECKED">false</string>
+    
+    <!--    Months strings-->
+    <array name="group_dropdown_months">
+        <item name="all">Все</item>
+        <item name="september">Сентябрь</item>
+        <item name="october">Октябрь</item>
+        <item name="november">Ноябрь</item>
+        <item name="december">Декабрь</item>
+        <item name="january">Январь</item>
+        <item name="february">Февраль</item>
+        <item name="march">Март</item>
+        <item name="april">Апрель</item>
+        <item name="may">Май</item>
+        <item name="june">Июнь</item>
+        <item name="july">Июль</item>
+        <item name="august">Август</item>
+    </array>
+
+    <array name="months_strings">
+        <item name="january">Январь</item>
+        <item name="february">Февраль</item>
+        <item name="march">Март</item>
+        <item name="april">Апрель</item>
+        <item name="may">Май</item>
+        <item name="june">Июнь</item>
+        <item name="july">Июль</item>
+        <item name="august">Август</item>
+        <item name="september">Сентябрь</item>
+        <item name="october">Октябрь</item>
+        <item name="november">Ноябрь</item>
+        <item name="december">Декабрь</item>
+    </array>
 </resources>

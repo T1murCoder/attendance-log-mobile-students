@@ -43,11 +43,11 @@ public class LoginViewModel extends ViewModel {
 
 
     public void changeLogin(@NonNull String login) {
-        this.login = login;
+        this.login = login.trim();
     }
 
     public void changePassword(@NonNull String password) {
-        this.password = password;
+        this.password = password.trim();
     }
 
     public void confirm() {

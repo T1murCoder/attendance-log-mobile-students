@@ -44,6 +44,8 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/action_elements_background"
                 android:cursorVisible="true"
+                android:backgroundTint="@color/white"
+
                 android:ems="10"
                 android:hint="Имя"
                 android:inputType="text"
@@ -61,6 +63,8 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/action_elements_background"
                 android:cursorVisible="true"
+                android:backgroundTint="@color/white"
+
                 android:ems="10"
                 android:hint="Фамилия"
                 android:inputType="text"
@@ -79,6 +83,8 @@
                 android:cursorVisible="true"
                 android:ems="10"
                 android:hint="Логин"
+                android:backgroundTint="@color/white"
+
                 android:inputType="text"
                 android:padding="20dp"
                 android:textColor="@color/black"
@@ -93,6 +99,8 @@
                 android:background="@drawable/action_elements_background"
                 android:paddingStart="6dp"
                 app:boxStrokeWidth="0dp"
+                android:backgroundTint="@color/white"
+
                 app:hintEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:passwordToggleEnabled="true"
@@ -106,6 +114,8 @@
                     android:hint="@string/password_edit_text_hint"
                     android:inputType="textPassword"
                     android:textColor="@color/black"
+                    android:backgroundTint="@color/white"
+
                     android:textColorHint="@color/main_gray"
                     android:textCursorDrawable="@color/main_gray"
                     android:textSize="16sp" />

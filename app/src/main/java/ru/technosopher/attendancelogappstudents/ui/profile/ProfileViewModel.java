@@ -1,17 +1,31 @@
 package ru.technosopher.attendancelogappstudents.ui.profile;
 
+import static ru.technosopher.attendancelogappstudents.ui.MainActivity.FIREBASE_AVATAR_PREFIX;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import ru.technosopher.attendancelogappstudents.data.UserRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.domain.users.GetUserByIdUseCase;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 import ru.technosopher.attendancelogappstudents.domain.sign.LogoutUseCase;
 import ru.technosopher.attendancelogappstudents.domain.users.UpdateUserProfileUseCase;
+import ru.technosopher.attendancelogappstudents.ui.MainActivity;
 
 public class ProfileViewModel extends ViewModel {
+    public static final String TAG = "PROFILE_VIEW_MODEL";
     private final MutableLiveData<State> mutableStateLiveData = new MutableLiveData<>();
     public final LiveData<State> stateLiveData = mutableStateLiveData;
 
@@ -25,6 +39,9 @@ public class ProfileViewModel extends ViewModel {
     private final UpdateUserProfileUseCase updateUserProfileUseCase = new UpdateUserProfileUseCase(
             UserRepositoryImpl.getInstance()
     );
+
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference storageRef = storage.getReference();
 
     @Nullable
     private String name;
@@ -56,13 +73,41 @@ public class ProfileViewModel extends ViewModel {
         changeSurname(prefsSurname);
         changeTelegram(prefsTelegram);
         changeGithub(prefsGithub);
+        changePhoto(prefsPhotoUrl);
+    }
+
+    public void uploadAvatar(String id, String prefsLogin, Uri image) {
+        if (image != null) {
+            StorageReference imageRef = storageRef.child(FIREBASE_AVATAR_PREFIX + id + ".png");
+
+            imageRef.putFile(image).addOnSuccessListener(taskSnapshot -> {
+                Log.d(TAG, "Image loaded!");
+                updateUserProfileUseCase.execute(
+                        id,
+                        new UserEntity(
+                                id,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                imageRef.getPath()
+                        ),
+                        userStatus -> loadPrefs(id, prefsLogin, name, surname, telegram, github, imageRef.getPath())
+                );
+            }).addOnFailureListener(e -> {
+                Log.d(TAG, e.toString());
+                mutableStateLiveData.postValue(new State("Не получилось загрузить аватар!", null, false));
+            });
+        } else {
+            Log.d(TAG, "Image is null!");
+        }
     }
 
     public void updateProfile(String id, String prefsLogin) {
         if (name == null || surname == null || name.isEmpty() || surname.isEmpty()) {
             mutableStateLiveData.postValue(new State("Имя и фамилия не могут быть пустыми", null, false));
         } else {
-            //TODO(fix untouched fields update)
             mutableStateLiveData.postValue(new State(null, null, true));
             updateUserProfileUseCase.execute(
                     id,
@@ -88,17 +133,18 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public void changeName(String name){
-        this.name = name;
+        this.name = name.trim();
     }
     public void changeSurname(String surname){
-        this.surname = surname;
+        this.surname = surname.trim();
     }
     public void changeTelegram(String telegram){
-        this.telegram = telegram;
+        this.telegram = telegram.trim();
     }
     public void changeGithub(String github){
-        this.github = github;
+        this.github = github.trim();
     }
+    public void changePhoto(String photo) {this.photo = photo;}
 
     public void logout() {
         logoutUseCase.execute();

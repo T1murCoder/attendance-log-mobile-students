@@ -1,13 +1,22 @@
 package ru.technosopher.attendancelogappstudents.ui.profile;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -15,7 +24,25 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.FutureTarget;
+import com.canhub.cropper.CropImage;
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
+import com.canhub.cropper.CropImageView;
+import com.google.android.gms.tasks.RuntimeExecutionException;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.util.concurrent.ExecutionException;
 
 import ru.technosopher.attendancelogappstudents.R;
 import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
@@ -27,11 +54,31 @@ import ru.technosopher.attendancelogappstudents.ui.utils.UpdateSharedPreferences
 
 public class ProfileFragment extends Fragment {
 
+    public static final String TAG = "PROFILE_FRAGMENT";
     private NavigationBarChangeListener navigationBarChangeListener;
     private UpdateSharedPreferences prefs;
     private FragmentProfileBinding binding;
 
     private ProfileViewModel viewModel;
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference storageRef = storage.getReference();
+    private Uri userAvatarUri;
+
+    private ActivityResultLauncher<CropImageContractOptions> cropImageActivity = registerForActivityResult(new CropImageContract(),
+            result -> {
+                if (result.isSuccessful()) {
+                    try {
+                        userAvatarUri = result.getUriContent();
+                        Glide.with(this).load(userAvatarUri).into(binding.profileAvatarIv);
+                        viewModel.uploadAvatar(prefs.getPrefsId(), prefs.getPrefsLogin(), userAvatarUri);
+                    } catch (Exception e) {
+                        Log.d(TAG, "Something goes wrong: " + String.valueOf(e));
+                        Toast.makeText(requireContext(), "Что-то пошло не так", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +96,10 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.bind(view);
 
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+
+        binding.profileNewImageFab.setOnClickListener(v -> {
+            startCrop();
+        });
 
         binding.profileLogoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,10 +258,9 @@ public class ProfileFragment extends Fragment {
                     binding.profileSurnameEt.setText(user.getSurname());
                     binding.profileTelegramEt.setText(user.getTelegram_url() != null ? user.getTelegram_url() : "Provide your telegram");
                     binding.profileGithubEt.setText(user.getGithub_url() != null ? user.getGithub_url() : "Provide your github");
-                    // TODO (validate link)
-                    // TODO (FIREBASE SLANDER?????????)
-//                    if (user.getPhoto_url() != null)
-//                        Picasso.get().load(user.getPhoto_url()).into(binding.profileAvatarIv);
+                    if (user.getPhoto_url() != null) {
+                        loadAvatar(user.getPhoto_url());
+                    }
                 }else{
                     Toast.makeText(getContext(), state.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     viewModel.loadPrefs(
@@ -233,6 +283,42 @@ public class ProfileFragment extends Fragment {
             //navigationBarChangeListener.changeSelectedItem(R.id.lessons);
             Navigation.findNavController(view).navigate(R.id.action_profileFragment_to_loginFragment);
         });
+    }
+
+    private void startCrop() {
+        CropImageOptions options = new CropImageOptions();
+        options.imageSourceIncludeCamera = false;
+        options.imageSourceIncludeGallery = true;
+        options.aspectRatioX = 1;
+        options.aspectRatioY = 1;
+        options.cropShape = CropImageView.CropShape.RECTANGLE;
+        options.fixAspectRatio = true;
+        options.showCropOverlay = true;
+        options.outputCompressFormat = Bitmap.CompressFormat.PNG;
+
+        CropImageContractOptions cropOptions = new CropImageContractOptions(null, options);
+
+        cropImageActivity.launch(cropOptions);
+    }
+
+    private void loadAvatar(String imageUrl) {
+        StorageReference imageRef = storageRef.child(imageUrl);
+
+        imageRef.getDownloadUrl().addOnCompleteListener(task -> {
+            try {
+                if (task != null && task.getResult() != null && task.isSuccessful()) {
+                    Glide.with(requireContext()).load(task.getResult()).into(binding.profileAvatarIv);
+                }
+                Log.d(TAG, "loadAvatar: " + task.isSuccessful());
+            } catch (RuntimeExecutionException e) {
+                Log.d(TAG, "loadAvatar: " + false);
+            }
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "loadAvatar: " + false);
+        }).addOnCanceledListener(() -> {
+            Log.d(TAG, "loadAvatar: " + false);
+        });
+
     }
 
     @Override

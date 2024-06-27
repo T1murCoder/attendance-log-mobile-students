@@ -25,6 +25,14 @@ public class StudentEntity {
         this.attendanceEntityList = attendanceEntityList;
     }
 
+    public StudentEntity(StudentEntity student) {
+        this.id = student.id;
+        this.name = student.name;
+        this.surname = student.surname;
+        this.points = student.points;
+        this.attendanceEntityList = student.attendanceEntityList;
+    }
+
     @NonNull
     public String getId() {
         return id;
