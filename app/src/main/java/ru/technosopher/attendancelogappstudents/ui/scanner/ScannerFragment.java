@@ -33,17 +33,17 @@ import ru.technosopher.attendancelogappstudents.ui.utils.DateFormatter;
 
 public class ScannerFragment extends Fragment {
 
+    public static final String TAG = "SCANNER_FRAGMENT";
+
     public static final String SCANNER_GROUP_NAME = "GROUP_NAME";
     public static final String SCANNER_LESSON_DATE = "SCANNER_LESSON_DATE";
     public static final String SCANNER_LESSON_TIME = "LESSON_TIME";
     public static final String SCANNER_LESSON_THEME = "LESSON_THEME";
-    private final String TAG = "SCANNER_FRAGMENT";
 
     private NavigationBarChangeListener navigationBarChangeListener;
     private UpdateSharedPreferences prefs;
     private ScannerViewModel viewModel;
     private FragmentScannerBinding binding;
-    private View scannerView;
 
     private DecoratedBarcodeView barcodeView;
     private boolean isScanning = true;
@@ -65,8 +65,7 @@ public class ScannerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        scannerView = inflater.inflate(R.layout.fragment_scanner, container, false);
-        return scannerView;
+        return inflater.inflate(R.layout.fragment_scanner, container, false);
     }
 
     @Override
@@ -91,54 +90,6 @@ public class ScannerFragment extends Fragment {
             activityResultLauncher.launch(Manifest.permission.CAMERA);
         }
         subscribe(viewModel);
-    }
-
-    private void initializeScanner() {
-        barcodeView.setStatusText("");
-        barcodeView.resume();
-        barcodeView.decodeContinuous(result -> {
-            if (isScanning) {
-                isScanning = false;
-                viewModel.markAttended(result.getResult().getText(), prefs.getPrefsId());
-            }
-        });
-    }
-
-    private void subscribe(ScannerViewModel viewModel) {
-        viewModel.stateLiveData.observe(getViewLifecycleOwner(), state -> {
-
-            if (!state.getSuccess() && !state.getLoading()) {
-                Toast.makeText(scannerView.getContext(), "Ошибка...", Toast.LENGTH_SHORT).show();
-                binding.btnRefreshScan.setVisibility(View.VISIBLE);
-                return;
-            }
-
-            LessonEntity lesson = state.getLesson();
-
-            if (lesson == null) return;
-
-            Bundle info = new Bundle();
-            info.putString(SCANNER_GROUP_NAME, lesson.getGroupName());
-            info.putString(SCANNER_LESSON_DATE, DateFormatter.getDateStringFromDate(lesson.getTimeStart(), "dd.MM.YYYY"));
-            info.putString(SCANNER_LESSON_TIME, DateFormatter.getFullTimeStringFromDate(lesson.getTimeStart(), lesson.getTimeEnd(), "HH:mm"));
-            info.putString(SCANNER_LESSON_THEME, lesson.getTheme());
-
-            BottomSheetLessonInfo bottomSheetLessonInfo = new BottomSheetLessonInfo();
-            bottomSheetLessonInfo.setArguments(info);
-
-            bottomSheetLessonInfo.show(requireActivity().getSupportFragmentManager(), TAG);
-
-            Toast.makeText(requireContext(), "Вы успешно отметились на уроке!", Toast.LENGTH_SHORT).show();
-
-            binding.btnRefreshScan.setVisibility(View.VISIBLE);
-        });
-    }
-
-    private boolean allPermissionGranted() {
-        return ContextCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -175,6 +126,60 @@ public class ScannerFragment extends Fragment {
         if (barcodeView != null) {
             barcodeView.pause();
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        binding = null;
+        super.onDestroyView();
+    }
+
+    private void initializeScanner() {
+        barcodeView.setStatusText("");
+        barcodeView.resume();
+        barcodeView.decodeContinuous(result -> {
+            if (isScanning) {
+                isScanning = false;
+                viewModel.markAttended(result.getResult().getText(), prefs.getPrefsId());
+            }
+        });
+    }
+
+    private void subscribe(ScannerViewModel viewModel) {
+        viewModel.stateLiveData.observe(getViewLifecycleOwner(), state -> {
+
+            if (!state.getSuccess() && !state.getLoading()) {
+                Toast.makeText(requireContext(), "Ошибка...", Toast.LENGTH_SHORT).show();
+                binding.btnRefreshScan.setVisibility(View.VISIBLE);
+                return;
+            }
+
+            LessonEntity lesson = state.getLesson();
+
+            if (lesson == null) return;
+
+            Bundle info = new Bundle();
+            info.putString(SCANNER_GROUP_NAME, lesson.getGroupName());
+            info.putString(SCANNER_LESSON_DATE, DateFormatter.getDateStringFromDate(lesson.getTimeStart(), "dd.MM.YYYY"));
+            info.putString(SCANNER_LESSON_TIME, DateFormatter.getFullTimeStringFromDate(lesson.getTimeStart(), lesson.getTimeEnd(), "HH:mm"));
+            info.putString(SCANNER_LESSON_THEME, lesson.getTheme());
+
+            BottomSheetLessonInfo bottomSheetLessonInfo = new BottomSheetLessonInfo();
+            bottomSheetLessonInfo.setArguments(info);
+
+            bottomSheetLessonInfo.show(requireActivity().getSupportFragmentManager(), TAG);
+
+            Toast.makeText(requireContext(), "Вы успешно отметились на уроке!", Toast.LENGTH_SHORT).show();
+
+            binding.btnRefreshScan.setVisibility(View.VISIBLE);
+        });
+    }
+
+    private boolean allPermissionGranted() {
+        return ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED;
     }
 
 }

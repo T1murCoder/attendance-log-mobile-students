@@ -230,6 +230,30 @@ public class ProfileFragment extends Fragment {
         );
 
     }
+
+    @Override
+    public void onDestroyView() {
+        binding = null;
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        prefs = (UpdateSharedPreferences) requireContext();
+        CredentialsDataSource.getInstance().updateLogin(prefs.getPrefsLogin(), prefs.getPrefsPassword());
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try{
+            navigationBarChangeListener = (NavigationBarChangeListener) context;
+            prefs = (UpdateSharedPreferences) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString());
+        }
+    }
     private void subscribe(ProfileViewModel viewModel){
         viewModel.stateLiveData.observe(getViewLifecycleOwner(), state -> {
             if(Boolean.TRUE.equals(state.getLoading())){
@@ -321,27 +345,4 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    @Override
-    public void onDestroyView() {
-        binding = null;
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        prefs = (UpdateSharedPreferences) requireContext();
-        CredentialsDataSource.getInstance().updateLogin(prefs.getPrefsLogin(), prefs.getPrefsPassword());
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try{
-            navigationBarChangeListener = (NavigationBarChangeListener) context;
-            prefs = (UpdateSharedPreferences) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString());
-        }
-    }
 }

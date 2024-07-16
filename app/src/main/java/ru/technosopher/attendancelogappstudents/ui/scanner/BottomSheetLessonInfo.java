@@ -10,15 +10,15 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import ru.technosopher.attendancelogappstudents.R;
-import ru.technosopher.attendancelogappstudents.databinding.LayoutBottomSheetLessonInfoBinding;
+import ru.technosopher.attendancelogappstudents.databinding.DialogBottomSheetLessonInfoBinding;
 
 public class BottomSheetLessonInfo extends BottomSheetDialogFragment {
-    private LayoutBottomSheetLessonInfoBinding binding;
+    private DialogBottomSheetLessonInfoBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = LayoutBottomSheetLessonInfoBinding.bind(inflater.inflate(R.layout.layout_bottom_sheet_lesson_info, container, false));
+        binding = DialogBottomSheetLessonInfoBinding.bind(inflater.inflate(R.layout.dialog_bottom_sheet_lesson_info, container, false));
 
         final Bundle info = getArguments();
 
@@ -44,5 +44,11 @@ public class BottomSheetLessonInfo extends BottomSheetDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

@@ -2,10 +2,7 @@ package ru.technosopher.attendancelogappstudents.ui.profile;
 
 import static ru.technosopher.attendancelogappstudents.ui.MainActivity.FIREBASE_AVATAR_PREFIX;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -13,19 +10,18 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import ru.technosopher.attendancelogappstudents.data.UserRepositoryImpl;
-import ru.technosopher.attendancelogappstudents.domain.users.GetUserByIdUseCase;
+import ru.technosopher.attendancelogappstudents.data.repository.UserRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 import ru.technosopher.attendancelogappstudents.domain.sign.LogoutUseCase;
 import ru.technosopher.attendancelogappstudents.domain.users.UpdateUserProfileUseCase;
-import ru.technosopher.attendancelogappstudents.ui.MainActivity;
 
 public class ProfileViewModel extends ViewModel {
+
     public static final String TAG = "PROFILE_VIEW_MODEL";
+
     private final MutableLiveData<State> mutableStateLiveData = new MutableLiveData<>();
     public final LiveData<State> stateLiveData = mutableStateLiveData;
 

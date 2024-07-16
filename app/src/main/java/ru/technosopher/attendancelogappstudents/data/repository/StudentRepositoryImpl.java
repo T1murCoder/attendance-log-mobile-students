@@ -1,4 +1,4 @@
-package ru.technosopher.attendancelogappstudents.data;
+package ru.technosopher.attendancelogappstudents.data.repository;
 
 import androidx.annotation.NonNull;
 
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import ru.technosopher.attendancelogappstudents.data.dto.StudentWithAttendances;
+import ru.technosopher.attendancelogappstudents.data.dto.StudentWithAttendancesDto;
 import ru.technosopher.attendancelogappstudents.data.network.RetrofitFactory;
 import ru.technosopher.attendancelogappstudents.data.source.StudentApi;
 import ru.technosopher.attendancelogappstudents.data.utils.CallToConsumer;
@@ -15,7 +15,6 @@ import ru.technosopher.attendancelogappstudents.domain.entities.AttendanceEntity
 import ru.technosopher.attendancelogappstudents.domain.entities.Status;
 
 import ru.technosopher.attendancelogappstudents.domain.entities.StudentEntity;
-import ru.technosopher.attendancelogappstudents.domain.entities.UserAccountEntity;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 import ru.technosopher.attendancelogappstudents.domain.students.StudentRepository;
 
@@ -38,7 +37,7 @@ public class StudentRepositoryImpl implements StudentRepository {
                 studentsDto -> {
                     if (studentsDto != null){
                         ArrayList<StudentEntity> res = new ArrayList<>();
-                        for (StudentWithAttendances dto: studentsDto){
+                        for (StudentWithAttendancesDto dto: studentsDto){
                             final String id = dto.id;
                             final String name = dto.name;
                             final String surname = dto.surname;

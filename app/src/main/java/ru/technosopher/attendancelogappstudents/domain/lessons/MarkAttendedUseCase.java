@@ -18,7 +18,6 @@ public class MarkAttendedUseCase {
     public void execute(@NonNull String qrCodeId,
                         @NonNull String studentId,
                         @NonNull Consumer<Status<LessonEntity>> callback) {
-//        repository.markAttendedByLessonId(lessonId, studentId, callback);
         repository.markAttendedByQRCodeId(qrCodeId, studentId, callback);
     }
 }

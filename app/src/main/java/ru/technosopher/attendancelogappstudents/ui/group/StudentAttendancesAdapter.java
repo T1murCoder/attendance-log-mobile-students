@@ -2,7 +2,6 @@ package ru.technosopher.attendancelogappstudents.ui.group;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,25 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import ru.technosopher.attendancelogappstudents.R;
-import ru.technosopher.attendancelogappstudents.databinding.StudentTableItemBinding;
-import ru.technosopher.attendancelogappstudents.domain.entities.AttendanceEntity;
+import ru.technosopher.attendancelogappstudents.databinding.ItemStudentTableBinding;
 import ru.technosopher.attendancelogappstudents.domain.entities.StudentEntity;
 
 
 public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAttendancesAdapter.ViewHolder> {
-    private final List<StudentEntity> data = new ArrayList<>();
 
     public static final String TAG = "STUDENT_ATTENDANCES_ADAPTER";
+
+    private final List<StudentEntity> data = new ArrayList<>();
 
     private boolean state = true;
 
@@ -45,7 +39,7 @@ public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAtten
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ViewHolder(
-                StudentTableItemBinding.inflate(LayoutInflater.from(
+                ItemStudentTableBinding.inflate(LayoutInflater.from(
                                 parent.getContext()),
                         parent,
                         false));
@@ -75,9 +69,9 @@ public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAtten
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private final StudentTableItemBinding binding;
+        private final ItemStudentTableBinding binding;
 
-        public ViewHolder(@NonNull StudentTableItemBinding binding) {
+        public ViewHolder(@NonNull ItemStudentTableBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

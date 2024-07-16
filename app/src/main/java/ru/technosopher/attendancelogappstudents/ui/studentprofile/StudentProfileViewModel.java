@@ -7,17 +7,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import ru.technosopher.attendancelogappstudents.data.StudentRepositoryImpl;
-import ru.technosopher.attendancelogappstudents.domain.entities.Status;
+import ru.technosopher.attendancelogappstudents.data.repository.StudentRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 import ru.technosopher.attendancelogappstudents.domain.students.GetStudentProfileUseCase;
 
 public class StudentProfileViewModel extends ViewModel {
 
     public static final String TAG = "STUDENT_PROFILE_VIEWMODEL";
+
     private final MutableLiveData<State> mutableStateLiveData = new MutableLiveData<>();
     public final LiveData<State> stateLiveData = mutableStateLiveData;
 
