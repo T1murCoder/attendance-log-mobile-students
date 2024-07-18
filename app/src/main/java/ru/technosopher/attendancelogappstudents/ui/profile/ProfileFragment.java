@@ -66,18 +66,8 @@ public class ProfileFragment extends Fragment {
 
     private ActivityResultLauncher<CropImageContractOptions> cropImageActivity = registerForActivityResult(new CropImageContract(),
             result -> {
-                if (result.isSuccessful()) {
-                    try {
-                        userAvatarUri = result.getUriContent();
-                        Glide.with(this).load(userAvatarUri).into(binding.profileAvatarIv);
-                        viewModel.uploadAvatar(prefs.getPrefsId(), prefs.getPrefsLogin(), userAvatarUri);
-                    } catch (Exception e) {
-                        Log.d(TAG, "Something goes wrong: " + String.valueOf(e));
-                        Toast.makeText(requireContext(), "Что-то пошло не так", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show();
-                }
+                userAvatarUri = result.getUriContent();
+                viewModel.uploadAvatar(prefs.getPrefsId(), userAvatarUri);
             });
 
     @Override
@@ -219,7 +209,7 @@ public class ProfileFragment extends Fragment {
         });
 
         subscribe(viewModel);
-        viewModel.loadPrefs(
+        viewModel.update(
                 prefs.getPrefsId(),
                 prefs.getPrefsLogin(),
                 prefs.getPrefsName(),
@@ -285,7 +275,8 @@ public class ProfileFragment extends Fragment {
                     if (user.getPhoto_url() != null) {
                         loadAvatar(user.getPhoto_url());
                     }
-                }else{
+                }
+                if (state.getErrorMessage() != null){
                     Toast.makeText(getContext(), state.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     viewModel.loadPrefs(
                             prefs.getPrefsId(),
@@ -334,7 +325,7 @@ public class ProfileFragment extends Fragment {
                     Glide.with(requireContext()).load(task.getResult()).into(binding.profileAvatarIv);
                 }
                 Log.d(TAG, "loadAvatar: " + task.isSuccessful());
-            } catch (RuntimeExecutionException e) {
+            } catch (Exception e) {
                 Log.d(TAG, "loadAvatar: " + false);
             }
         }).addOnFailureListener(e -> {

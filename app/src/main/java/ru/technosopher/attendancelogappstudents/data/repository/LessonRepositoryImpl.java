@@ -23,6 +23,8 @@ public class LessonRepositoryImpl implements LessonRepository {
         return INSTANCE;
     }
 
+    private LessonRepositoryImpl() {}
+
     @Override
     public void getLessonById(@NonNull String id, @NonNull Consumer<Status<LessonEntity>> callback) {
         lessonApi.getLessonById(id).enqueue(new CallToConsumer<>(

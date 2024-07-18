@@ -30,6 +30,8 @@ public class StudentRepositoryImpl implements StudentRepository {
         return INSTANCE;
     }
 
+    private StudentRepositoryImpl() {}
+
     @Override
     public void getStudentsAttendances(@NonNull String groupId, Consumer<Status<List<StudentEntity>>> callback) {
         studentApi.getStudentWithAttendancesByGroupId(groupId).enqueue(new CallToConsumer<>(

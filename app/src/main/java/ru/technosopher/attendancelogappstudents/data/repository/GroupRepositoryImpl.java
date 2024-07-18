@@ -27,6 +27,8 @@ public class GroupRepositoryImpl implements GroupRepository {
         return INSTANCE;
     }
 
+    private GroupRepositoryImpl() {}
+
     @Override
     public void getGroupNameById(@NonNull String id, Consumer<Status<String>> callback) {
         groupApi.getGroupNameById(id).enqueue(new CallToConsumer<>(
