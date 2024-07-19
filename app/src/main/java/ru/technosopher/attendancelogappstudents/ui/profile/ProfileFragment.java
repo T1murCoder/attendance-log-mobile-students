@@ -110,7 +110,7 @@ public class ProfileFragment extends Fragment {
                     binding.profileNameEt.setFocusableInTouchMode(false);
                     binding.profileNameEt.setEnabled(false);
                 }
-
+                binding.fabSaveProfile.setVisibility(View.VISIBLE);
             }
         });
         binding.profileSurnameEditBtn.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +125,7 @@ public class ProfileFragment extends Fragment {
                     binding.profileSurnameEt.setFocusableInTouchMode(false);
                     binding.profileSurnameEt.setEnabled(false);
                 }
+                binding.fabSaveProfile.setVisibility(View.VISIBLE);
             }
         });
         binding.profileTelegramEditBtn.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +140,7 @@ public class ProfileFragment extends Fragment {
                     binding.profileTelegramEt.setFocusableInTouchMode(false);
                     binding.profileTelegramEt.setEnabled(false);
                 }
+                binding.fabSaveProfile.setVisibility(View.VISIBLE);
             }
         });
         binding.profileGithubEditBtn.setOnClickListener(new View.OnClickListener() {
@@ -153,6 +155,7 @@ public class ProfileFragment extends Fragment {
                     binding.profileGithubEt.setFocusableInTouchMode(false);
                     binding.profileGithubEt.setEnabled(false);
                 }
+                binding.fabSaveProfile.setVisibility(View.VISIBLE);
             }
         });
 
@@ -186,25 +189,47 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        binding.swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        binding.swipe.setEnabled(false); // временно отключен
+//        binding.swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                viewModel.updateProfile(prefs.getPrefsId(), prefs.getPrefsLogin());
+//                binding.profileGithubEt.setFocusable(false);
+//                binding.profileGithubEt.setFocusableInTouchMode(false);
+//                binding.profileGithubEt.setEnabled(false);
+//
+//                binding.profileSurnameEt.setFocusable(false);
+//                binding.profileSurnameEt.setFocusableInTouchMode(false);
+//                binding.profileSurnameEt.setEnabled(false);
+//
+//                binding.profileNameEt.setFocusable(false);
+//                binding.profileNameEt.setFocusableInTouchMode(false);
+//                binding.profileNameEt.setEnabled(false);
+//
+//                binding.profileTelegramEt.setFocusable(false);
+//                binding.profileTelegramEt.setFocusableInTouchMode(false);
+//                binding.profileTelegramEt.setEnabled(false);
+//                binding.fabSaveProfile.setVisibility(View.GONE);
+//            }
+//        });
+
+        binding.fabSaveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
+            public void onClick(View view) {
                 viewModel.updateProfile(prefs.getPrefsId(), prefs.getPrefsLogin());
                 binding.profileGithubEt.setFocusable(false);
                 binding.profileGithubEt.setFocusableInTouchMode(false);
                 binding.profileGithubEt.setEnabled(false);
-
                 binding.profileSurnameEt.setFocusable(false);
                 binding.profileSurnameEt.setFocusableInTouchMode(false);
                 binding.profileSurnameEt.setEnabled(false);
-
                 binding.profileNameEt.setFocusable(false);
                 binding.profileNameEt.setFocusableInTouchMode(false);
                 binding.profileNameEt.setEnabled(false);
-
                 binding.profileTelegramEt.setFocusable(false);
                 binding.profileTelegramEt.setFocusableInTouchMode(false);
                 binding.profileTelegramEt.setEnabled(false);
+                binding.fabSaveProfile.setVisibility(View.GONE);
             }
         });
 
@@ -249,13 +274,13 @@ public class ProfileFragment extends Fragment {
             if(Boolean.TRUE.equals(state.getLoading())){
                 binding.profileLoading.setVisibility(View.VISIBLE);
                 binding.profileContent.setVisibility(View.GONE);
-                binding.swipe.setEnabled(false);
-                binding.swipe.setVisibility(View.GONE);
+//                binding.swipe.setEnabled(false);
+//                binding.swipe.setVisibility(View.GONE);
             }
             else{
-                binding.swipe.setVisibility(View.VISIBLE);
-                binding.swipe.setEnabled(true);
-                binding.swipe.setRefreshing(false);
+//                binding.swipe.setVisibility(View.VISIBLE);
+//                binding.swipe.setEnabled(true);
+//                binding.swipe.setRefreshing(false);
                 binding.profileLoading.setVisibility(View.GONE);
                 binding.profileContent.setVisibility(View.VISIBLE);
                 UserEntity user = state.getUser();
