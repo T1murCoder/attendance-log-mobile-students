@@ -1,5 +1,6 @@
 package ru.technosopher.attendancelogappstudents.domain.images;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -16,5 +17,5 @@ public interface ImageRepository {
 
     void getProfileImage(@NonNull String imageUrl, Consumer<Status<ImageEntity>> callback);
 
-    Single<String> uploadProfileImage(@NonNull String id, @NonNull Uri imageUri);
+    Single<String> uploadProfileImage(@NonNull String id, @NonNull Bitmap imageBitmap);
 }

@@ -1,5 +1,9 @@
 package ru.technosopher.attendancelogappstudents.data.repository;
 
+import static ru.technosopher.attendancelogappstudents.data.utils.ImageCompressor.convertBitmapToBytes;
+import static ru.technosopher.attendancelogappstudents.data.utils.ImageCompressor.resizeBitmap;
+
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
@@ -9,6 +13,7 @@ import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.function.Consumer;
 
 import io.reactivex.rxjava3.core.Completable;
@@ -45,11 +50,14 @@ public class ImageRepositoryImpl implements ImageRepository {
     }
 
     @Override
-    public Single<String> uploadProfileImage(@NonNull String id, @NonNull Uri imageUri) {
+    public Single<String> uploadProfileImage(@NonNull String id, @NonNull Bitmap imageBitmap) {
         return Single.create(emitter -> {
             StorageReference imageRef = fbService.storageRef.child(FIREBASE_AVATAR_PREFIX + id + ".png");
 
-            UploadTask uploadTask = imageRef.putFile(imageUri);
+            Bitmap resizedImage = resizeBitmap(imageBitmap, 256, 256);
+            byte[] resizedImageBytes = convertBitmapToBytes(resizedImage, Bitmap.CompressFormat.PNG, 100);
+
+            UploadTask uploadTask = imageRef.putBytes(resizedImageBytes);
             uploadTask.addOnCompleteListener(command -> {
                     Log.d(TAG, "Image successfully uploaded!");
                     emitter.onSuccess(imageRef.getPath());

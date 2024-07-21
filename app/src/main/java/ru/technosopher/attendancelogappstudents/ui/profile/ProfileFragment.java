@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment {
     private ActivityResultLauncher<CropImageContractOptions> cropImageActivity = registerForActivityResult(new CropImageContract(),
             result -> {
                 userAvatarUri = result.getUriContent();
-                viewModel.uploadAvatar(prefs.getPrefsId(), userAvatarUri);
+                viewModel.uploadAvatar(prefs.getPrefsId(), userAvatarUri, requireActivity().getContentResolver());
             });
 
     @Override

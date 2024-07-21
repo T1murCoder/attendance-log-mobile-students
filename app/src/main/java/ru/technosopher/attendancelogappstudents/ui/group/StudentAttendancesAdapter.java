@@ -99,6 +99,7 @@ public class StudentAttendancesAdapter extends RecyclerView.Adapter<StudentAtten
 
             binding.tvPoints.setText(item.getPoints());
 
+            // TODO: Optimize this part
             if (att) {
                 CheckBoxAdapter adapter = new CheckBoxAdapter(context);
                 binding.attAndBallsRv.setAdapter(adapter);
