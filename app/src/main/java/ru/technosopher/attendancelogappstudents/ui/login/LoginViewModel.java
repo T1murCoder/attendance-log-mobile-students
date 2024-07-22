@@ -1,14 +1,12 @@
 package ru.technosopher.attendancelogappstudents.ui.login;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import ru.technosopher.attendancelogappstudents.data.UserRepositoryImpl;
+import ru.technosopher.attendancelogappstudents.data.repository.UserRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.domain.entities.UserEntity;
 import ru.technosopher.attendancelogappstudents.domain.sign.IsUserExistsUseCase;
@@ -18,8 +16,10 @@ public class LoginViewModel extends ViewModel {
 
     private final MutableLiveData<Void> mutableConfirmLiveData = new MutableLiveData<>();
     public final LiveData<Void> confirmLiveData = mutableConfirmLiveData;
+
     private final MutableLiveData<String> mutableErrorLiveData = new MutableLiveData<>();
     public final LiveData<String> errorLiveData = mutableErrorLiveData;
+
     private final MutableLiveData<State> mutableUserLiveData = new MutableLiveData<>();
     public final LiveData<State> userLiveData = mutableUserLiveData;
 

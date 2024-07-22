@@ -83,4 +83,7 @@ dependencies {
     implementation("com.google.zxing:core:$zxing_version")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
+    //RxJava
+    implementation("io.reactivex.rxjava3:rxjava:3.1.8")
+
 }

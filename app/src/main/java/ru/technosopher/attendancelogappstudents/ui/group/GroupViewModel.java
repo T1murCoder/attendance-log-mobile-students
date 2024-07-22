@@ -9,19 +9,17 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import ru.technosopher.attendancelogappstudents.data.GroupRepositoryImpl;
-import ru.technosopher.attendancelogappstudents.data.StudentRepositoryImpl;
+import ru.technosopher.attendancelogappstudents.data.repository.GroupRepositoryImpl;
+import ru.technosopher.attendancelogappstudents.data.repository.StudentRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.domain.entities.AttendanceEntity;
 
 import ru.technosopher.attendancelogappstudents.domain.entities.GroupEntity;
 import ru.technosopher.attendancelogappstudents.domain.entities.StudentEntity;
 import ru.technosopher.attendancelogappstudents.domain.groups.GetGroupByStudentIdUseCase;
-import ru.technosopher.attendancelogappstudents.domain.groups.GetGroupNameByIdUseCase;
 import ru.technosopher.attendancelogappstudents.domain.students.GetStudentsAttendancesUseCase;
 import ru.technosopher.attendancelogappstudents.ui.utils.DateFormatter;
 
@@ -30,8 +28,8 @@ public class GroupViewModel extends ViewModel {
     private static final String TAG = "GROUP_VIEW_MODEL";
 
     private final MutableLiveData<State> mutableStateLiveData = new MutableLiveData<>();
-
     public LiveData<State> stateLiveData = mutableStateLiveData;
+
     private final MutableLiveData<String> mutableErrorLiveData = new MutableLiveData<>();
     public LiveData<String> errorLiveData = mutableErrorLiveData;
 
@@ -88,6 +86,23 @@ public class GroupViewModel extends ViewModel {
         });
     }
 
+    public List<String> extractDates(List<AttendanceEntity> attendances) {
+        List<String> dates = new ArrayList<>();
+        sortAttendances(attendances);
+        for (AttendanceEntity att : attendances) {
+            dates.add(DateFormatter.getDateStringFromDate(att.getLessonTimeStart(), "MMM dd"));
+        }
+        return dates;
+    }
+    public List<StudentEntity> getStudents() {
+        return this.students;
+    }
+
+    public GroupEntity getGroup() {
+        return group;
+    }
+
+    // Фильтруем посещения по месяцам
 //    public void filterGroupByMonth(@Nullable Calendar month) {
 //        Log.d(TAG, String.valueOf(students));
 //        if (students == null || group == null) return;
@@ -144,21 +159,6 @@ public class GroupViewModel extends ViewModel {
         attendances.sort(Comparator.comparing(AttendanceEntity::getLessonTimeStart));
     }
 
-    public List<String> extractDates(List<AttendanceEntity> attendances) {
-        List<String> dates = new ArrayList<>();
-        sortAttendances(attendances);
-        for (AttendanceEntity att : attendances) {
-            dates.add(DateFormatter.getDateStringFromDate(att.getLessonTimeStart(), "MMM dd"));
-        }
-        return dates;
-    }
-    public List<StudentEntity> getStudents() {
-        return this.students;
-    }
-
-    public GroupEntity getGroup() {
-        return group;
-    }
     public class State {
 
         @Nullable

@@ -20,15 +20,6 @@ public class LessonEntity {
     @NonNull
     private final GregorianCalendar date;
 
-//    public LessonEntity(@NonNull String id, @NonNull String theme, @NonNull String groupId, @NonNull GregorianCalendar timeStart, @NonNull GregorianCalendar timeEnd, @NonNull GregorianCalendar date) {
-//        this.id = id;
-//        this.theme = theme;
-//        this.groupId = groupId;
-//        this.timeStart = timeStart;
-//        this.timeEnd = timeEnd;
-//        this.date = date;
-//    }
-
     public  LessonEntity(@NonNull String id, @NonNull String theme, @NonNull String groupId, @NonNull String groupName, @NonNull GregorianCalendar timeStart, @NonNull GregorianCalendar timeEnd, @NonNull GregorianCalendar date){
         this.id = id;
         this.theme = theme;

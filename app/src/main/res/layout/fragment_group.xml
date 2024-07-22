@@ -93,13 +93,13 @@
             android:visibility="visible">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:visibility="visible"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:background="@color/white"
@@ -184,10 +184,10 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/students_rv"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/student_table_item" />
+                    tools:listitem="@layout/item_student_table" />
 
             </LinearLayout>
 
@@ -197,10 +197,10 @@
             android:visibility="gone"
             android:id="@+id/students_empty_lessons_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/dummy_item_list"
+            tools:listitem="@layout/item_dummy_list"
             tools:itemCount="10"/>
 
     </LinearLayout>

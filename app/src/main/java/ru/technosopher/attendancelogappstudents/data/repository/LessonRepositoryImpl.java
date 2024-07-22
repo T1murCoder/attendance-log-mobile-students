@@ -1,4 +1,4 @@
-package ru.technosopher.attendancelogappstudents.data;
+package ru.technosopher.attendancelogappstudents.data.repository;
 
 import androidx.annotation.NonNull;
 
@@ -22,6 +22,8 @@ public class LessonRepositoryImpl implements LessonRepository {
         if (INSTANCE == null) INSTANCE = new LessonRepositoryImpl();
         return INSTANCE;
     }
+
+    private LessonRepositoryImpl() {}
 
     @Override
     public void getLessonById(@NonNull String id, @NonNull Consumer<Status<LessonEntity>> callback) {

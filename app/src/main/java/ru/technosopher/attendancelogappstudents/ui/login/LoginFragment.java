@@ -96,6 +96,23 @@ public class LoginFragment extends Fragment {
         subscribe(viewModel);
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            prefs = (UpdateSharedPreferences) context;
+            navigationBarChangeListener = (NavigationBarChangeListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString());
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        binding = null;
+        super.onDestroyView();
+    }
+
     private void subscribe(LoginViewModel viewModel) {
         viewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
             binding.loginAccountErrorTv.setVisibility(View.VISIBLE);
@@ -124,22 +141,5 @@ public class LoginFragment extends Fragment {
         viewModel.loadingLiveData.observe(getViewLifecycleOwner(), loading ->{
             binding.loadingProgressBar.setVisibility(Utils.visibleOrGone(loading));
         });
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            prefs = (UpdateSharedPreferences) context;
-            navigationBarChangeListener = (NavigationBarChangeListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString());
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        binding = null;
-        super.onDestroyView();
     }
 }

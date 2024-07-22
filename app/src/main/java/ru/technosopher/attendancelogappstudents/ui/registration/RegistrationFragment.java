@@ -25,9 +25,9 @@ public class RegistrationFragment extends Fragment {
 
     private UpdateSharedPreferences prefs;
     private NavigationBarChangeListener navigationBarChangeListener;
-    FragmentRegistrationBinding binding;
+    private FragmentRegistrationBinding binding;
 
-    RegistrationViewModel viewModel;
+    private RegistrationViewModel viewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,6 +98,23 @@ public class RegistrationFragment extends Fragment {
         subscribe(viewModel);
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            prefs = (UpdateSharedPreferences) context;
+            navigationBarChangeListener = (NavigationBarChangeListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString());
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        binding = null;
+        super.onDestroyView();
+    }
+
     private void subscribe(RegistrationViewModel viewModel){
         viewModel.errorLiveData.observe(getViewLifecycleOwner(), error ->{
             binding.registrationAccountErrorTv.setVisibility(View.VISIBLE);
@@ -131,20 +148,4 @@ public class RegistrationFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            prefs = (UpdateSharedPreferences) context;
-            navigationBarChangeListener = (NavigationBarChangeListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString());
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        binding = null;
-        super.onDestroyView();
-    }
 }
