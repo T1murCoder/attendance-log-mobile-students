@@ -56,7 +56,7 @@ public class GroupFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentGroupBinding.bind(view);
         prefs = (UpdateSharedPreferences) requireContext();
-//        Toast.makeText(requireContext(), "OnViewCreated", Toast.LENGTH_SHORT).show();
+
         Log.d(TAG, prefs.getPrefsId());
 
 
@@ -115,6 +115,31 @@ public class GroupFragment extends Fragment {
         viewModel.update(prefs.getPrefsId());
     }
 
+    @Override
+    public void onDestroyView() {
+        binding = null;
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            navigationBarChangeListener = (NavigationBarChangeListener) context;
+            prefs = (UpdateSharedPreferences) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString());
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        viewModel.saveGroupIdByStudentId(prefs.getPrefsId());
+//        Toast.makeText(requireContext(), "OnResume", Toast.LENGTH_SHORT).show();
+    }
+
     private void subscribe(GroupViewModel viewModel, StudentAttendancesAdapter attendancesAdapter, DatesAdapter datesAdapter) {
         viewModel.stateLiveData.observe(getViewLifecycleOwner(), state -> {
             if (state.getLoading()) {
@@ -150,45 +175,14 @@ public class GroupFragment extends Fragment {
             }
         });
 
-        viewModel.errorLiveData.observe(getViewLifecycleOwner(), errorMsg ->{
+        viewModel.errorLiveData.observe(getViewLifecycleOwner(), errorMsg -> {
             binding.tableErrorTv.setVisibility(View.VISIBLE);
             binding.tableErrorTv.setText(errorMsg);
             binding.tableContent.setVisibility(View.GONE);
         });
     }
 
-    private void openStudentProfile(@NonNull String id) {
-        View view = getView();
-        if (view == null) return;
-        Navigation.findNavController(view).navigate(R.id.action_groupFragment_to_studentProfileFragment, StudentProfileFragment.getBundle(id));
-    }
-
-    @Override
-    public void onDestroyView() {
-        binding = null;
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try{
-            navigationBarChangeListener = (NavigationBarChangeListener) context;
-            prefs = (UpdateSharedPreferences) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString());
-        }
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-//        viewModel.saveGroupIdByStudentId(prefs.getPrefsId());
-//        Toast.makeText(requireContext(), "OnResume", Toast.LENGTH_SHORT).show();
-    }
-
-    public GregorianCalendar getCalendarByMonth(String month) {
+    private GregorianCalendar getCalendarByMonth(String month) {
 
         String monthLower = month.toLowerCase().trim();
 
@@ -212,5 +206,11 @@ public class GroupFragment extends Fragment {
         calendar.set(Calendar.MONTH, monthIndex);
 
         return calendar;
+    }
+
+    private void openStudentProfile(@NonNull String id) {
+        View view = getView();
+        if (view == null) return;
+        Navigation.findNavController(view).navigate(R.id.action_groupFragment_to_studentProfileFragment, StudentProfileFragment.getBundle(id));
     }
 }

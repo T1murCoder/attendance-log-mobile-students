@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import ru.technosopher.attendancelogappstudents.databinding.PointEtElementBinding;
+import ru.technosopher.attendancelogappstudents.databinding.ElementPointBinding;
 import ru.technosopher.attendancelogappstudents.domain.entities.AttendanceEntity;
 import ru.technosopher.attendancelogappstudents.ui.utils.OnChangeText;
 
@@ -31,7 +31,7 @@ public class PointsAdapter extends RecyclerView.Adapter<PointsAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ViewHolder(
-                PointEtElementBinding.inflate(LayoutInflater.from(
+                ElementPointBinding.inflate(LayoutInflater.from(
                                 parent.getContext()),
                         parent,
                         false));
@@ -56,9 +56,9 @@ public class PointsAdapter extends RecyclerView.Adapter<PointsAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final PointEtElementBinding binding;
+        private final ElementPointBinding binding;
 
-        public ViewHolder(@NonNull PointEtElementBinding binding) {
+        public ViewHolder(@NonNull ElementPointBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

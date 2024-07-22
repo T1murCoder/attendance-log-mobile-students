@@ -1,4 +1,4 @@
-package ru.technosopher.attendancelogappstudents.data;
+package ru.technosopher.attendancelogappstudents.data.repository;
 
 import androidx.annotation.NonNull;
 

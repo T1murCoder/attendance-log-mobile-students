@@ -28,8 +28,10 @@ import ru.technosopher.attendancelogappstudents.ui.utils.NavigationBarChangeList
 import ru.technosopher.attendancelogappstudents.R;
 
 public class StudentProfileFragment extends Fragment {
+
     public static final String TAG = "STUDENT_PROFILE_FRAGMENT";
     private static final String KEY_ID = "STUDENT_PROFILE_FRAGMENT";
+
     private NavigationBarChangeListener navigationBarChangeListener;
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference storageRef = storage.getReference();
@@ -71,6 +73,28 @@ public class StudentProfileFragment extends Fragment {
 
         viewModel.update();
         subscribe(viewModel);
+    }
+
+    public static Bundle getBundle(@NonNull String id) {
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_ID, id);
+        return bundle;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            navigationBarChangeListener = (NavigationBarChangeListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString());
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        binding = null;
+        super.onDestroyView();
     }
 
     private void subscribe(StudentProfileViewModel viewModel) {
@@ -147,22 +171,6 @@ public class StudentProfileFragment extends Fragment {
         android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
         clipboard.setPrimaryClip(clip);
         Toast.makeText(requireContext(), "Скопировано!", Toast.LENGTH_SHORT).show();
-    }
-
-    public static Bundle getBundle(@NonNull String id) {
-        Bundle bundle = new Bundle();
-        bundle.putString(KEY_ID, id);
-        return bundle;
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            navigationBarChangeListener = (NavigationBarChangeListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString());
-        }
     }
 
 }
