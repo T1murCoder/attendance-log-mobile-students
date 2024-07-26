@@ -1,6 +1,7 @@
 package ru.technosopher.attendancelogappstudents.ui.group;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,10 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -57,6 +61,9 @@ public class GroupFragment extends Fragment {
         binding = FragmentGroupBinding.bind(view);
         prefs = (UpdateSharedPreferences) requireContext();
 
+        select(binding.attendanceBtn);
+        unselect(binding.pointsBtn);
+
         Log.d(TAG, prefs.getPrefsId());
 
 
@@ -66,15 +73,6 @@ public class GroupFragment extends Fragment {
         DatesAdapter datesAdapter = new DatesAdapter();
 
 
-        binding.pointsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                viewModel.update(prefs.getPrefsId());
-                attendancesAdapter.updateState(false);
-                attendancesAdapter.updateData(viewModel.getStudents());
-                datesAdapter.update(viewModel.extractDates(viewModel.getStudents().get(0).getAttendanceEntityList()));
-            }
-        });
         binding.attendanceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,6 +80,19 @@ public class GroupFragment extends Fragment {
                 attendancesAdapter.updateState(true);
                 attendancesAdapter.updateData(viewModel.getStudents());
                 datesAdapter.update(viewModel.extractDates(viewModel.getStudents().get(0).getAttendanceEntityList()));
+                select(binding.attendanceBtn);
+                unselect(binding.pointsBtn);
+            }
+        });
+        binding.pointsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewModel.update(prefs.getPrefsId());
+                attendancesAdapter.updateState(false);
+                attendancesAdapter.updateData(viewModel.getStudents());
+                datesAdapter.update(viewModel.extractDates(viewModel.getStudents().get(0).getAttendanceEntityList()));
+                unselect(binding.attendanceBtn);
+                select(binding.pointsBtn);
             }
         });
 
@@ -206,6 +217,15 @@ public class GroupFragment extends Fragment {
         calendar.set(Calendar.MONTH, monthIndex);
 
         return calendar;
+    }
+
+    private void unselect(Button button){
+        ColorStateList colorStateList = ContextCompat.getColorStateList(requireContext(), R.color.color_selector_unfocused);
+        button.setBackgroundTintList(colorStateList);
+    }
+    private void select(Button button){
+        ColorStateList colorStateList = ContextCompat.getColorStateList(requireContext(), R.color.color_selector_default);
+        button.setBackgroundTintList(colorStateList);
     }
 
     private void openStudentProfile(@NonNull String id) {
