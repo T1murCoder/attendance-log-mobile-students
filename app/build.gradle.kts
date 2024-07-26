@@ -86,5 +86,6 @@ dependencies {
     //RxJava
     implementation("io.reactivex.rxjava3:rxjava:3.1.8")
 
+    // HorizontalNestedScrollView
     implementation("com.github.Tans5:horizontalnestedscrollview:0.1.0")
 }
