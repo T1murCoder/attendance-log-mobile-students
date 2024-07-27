@@ -88,4 +88,7 @@ dependencies {
 
     // HorizontalNestedScrollView
     implementation("com.github.Tans5:horizontalnestedscrollview:0.1.0")
+
+    // MaterialSpinner
+    implementation("com.jaredrummler:material-spinner:1.3.1")
 }

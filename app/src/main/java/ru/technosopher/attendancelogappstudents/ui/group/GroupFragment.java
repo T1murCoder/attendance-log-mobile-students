@@ -22,6 +22,7 @@ import androidx.navigation.Navigation;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -80,6 +81,7 @@ public class GroupFragment extends Fragment {
                 attendancesAdapter.updateState(true);
                 attendancesAdapter.updateData(viewModel.getStudents());
                 datesAdapter.update(viewModel.extractDates(viewModel.getStudents().get(0).getAttendanceEntityList()));
+                binding.dateHeaderSpinner.setSelectedIndex(0);
                 select(binding.attendanceBtn);
                 unselect(binding.pointsBtn);
             }
@@ -91,6 +93,7 @@ public class GroupFragment extends Fragment {
                 attendancesAdapter.updateState(false);
                 attendancesAdapter.updateData(viewModel.getStudents());
                 datesAdapter.update(viewModel.extractDates(viewModel.getStudents().get(0).getAttendanceEntityList()));
+                binding.dateHeaderSpinner.setSelectedIndex(0);
                 unselect(binding.attendanceBtn);
                 select(binding.pointsBtn);
             }
@@ -98,21 +101,18 @@ public class GroupFragment extends Fragment {
 
         binding.studentsRv.setAdapter(attendancesAdapter);
         binding.datesRv.setAdapter(datesAdapter);
-//        String[] months = getResources().getStringArray(R.array.group_dropdown_months);
-//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_spinner, months);
-//        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        binding.dateHeaderSpinner.setAdapter(arrayAdapter);
-//        binding.dateHeaderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                viewModel.filterGroupByMonth(getCalendarByMonth(months[position]));
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                viewModel.filterGroupByMonth(null);
-//            }
-//        });
+
+        String[] months = getResources().getStringArray(R.array.group_dropdown_months);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_spinner, months);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.dateHeaderSpinner.setAdapter(arrayAdapter);
+        binding.dateHeaderSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                viewModel.filterGroupByMonth(getCalendarByMonth(months[position]));
+            }
+        });
 
         subscribe(viewModel, attendancesAdapter, datesAdapter);
         viewModel.update(prefs.getPrefsId());
@@ -123,6 +123,7 @@ public class GroupFragment extends Fragment {
         super.onStart();
         prefs = (UpdateSharedPreferences) requireContext();
         CredentialsDataSource.getInstance().updateLogin(prefs.getPrefsLogin(), prefs.getPrefsPassword());
+        binding.dateHeaderSpinner.setSelectedIndex(0);
         viewModel.update(prefs.getPrefsId());
     }
 
@@ -163,7 +164,7 @@ public class GroupFragment extends Fragment {
                     binding.tableProgressBar.setVisibility(View.GONE);
                     binding.tableErrorTv.setVisibility(View.GONE);
                     binding.tableContent.setVisibility(View.VISIBLE);
-                    if (state.getStudents().get(0).getAttendanceEntityList().isEmpty()) {
+                    if (state.getStudents().get(0).getAttendanceEntityList().isEmpty() && binding.dateHeaderSpinner.getSelectedIndex() == 0) {
                         binding.buttonsAttPointsLayout.setVisibility(View.GONE);
                         binding.hsrStudentsTable.setVisibility(View.GONE);
                         binding.studentsRv.setVisibility(View.GONE);
