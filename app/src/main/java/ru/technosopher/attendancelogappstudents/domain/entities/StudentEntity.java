@@ -2,6 +2,7 @@ package ru.technosopher.attendancelogappstudents.domain.entities;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StudentEntity {
@@ -30,7 +31,8 @@ public class StudentEntity {
         this.name = student.name;
         this.surname = student.surname;
         this.points = student.points;
-        this.attendanceEntityList = student.attendanceEntityList;
+        this.attendanceEntityList = new ArrayList<>();
+        this.attendanceEntityList.addAll(student.attendanceEntityList);
     }
 
     @NonNull

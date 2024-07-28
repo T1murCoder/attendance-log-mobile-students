@@ -1,6 +1,7 @@
 package ru.technosopher.attendancelogappstudents.ui.group;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,16 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -57,6 +62,9 @@ public class GroupFragment extends Fragment {
         binding = FragmentGroupBinding.bind(view);
         prefs = (UpdateSharedPreferences) requireContext();
 
+        select(binding.attendanceBtn);
+        unselect(binding.pointsBtn);
+
         Log.d(TAG, prefs.getPrefsId());
 
 
@@ -66,15 +74,6 @@ public class GroupFragment extends Fragment {
         DatesAdapter datesAdapter = new DatesAdapter();
 
 
-        binding.pointsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                viewModel.update(prefs.getPrefsId());
-                attendancesAdapter.updateState(false);
-                attendancesAdapter.updateData(viewModel.getStudents());
-                datesAdapter.update(viewModel.extractDates(viewModel.getStudents().get(0).getAttendanceEntityList()));
-            }
-        });
         binding.attendanceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,26 +81,38 @@ public class GroupFragment extends Fragment {
                 attendancesAdapter.updateState(true);
                 attendancesAdapter.updateData(viewModel.getStudents());
                 datesAdapter.update(viewModel.extractDates(viewModel.getStudents().get(0).getAttendanceEntityList()));
+                binding.dateHeaderSpinner.setSelectedIndex(0);
+                select(binding.attendanceBtn);
+                unselect(binding.pointsBtn);
+            }
+        });
+        binding.pointsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewModel.update(prefs.getPrefsId());
+                attendancesAdapter.updateState(false);
+                attendancesAdapter.updateData(viewModel.getStudents());
+                datesAdapter.update(viewModel.extractDates(viewModel.getStudents().get(0).getAttendanceEntityList()));
+                binding.dateHeaderSpinner.setSelectedIndex(0);
+                unselect(binding.attendanceBtn);
+                select(binding.pointsBtn);
             }
         });
 
         binding.studentsRv.setAdapter(attendancesAdapter);
         binding.datesRv.setAdapter(datesAdapter);
-//        String[] months = getResources().getStringArray(R.array.group_dropdown_months);
-//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_spinner, months);
-//        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        binding.dateHeaderSpinner.setAdapter(arrayAdapter);
-//        binding.dateHeaderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                viewModel.filterGroupByMonth(getCalendarByMonth(months[position]));
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                viewModel.filterGroupByMonth(null);
-//            }
-//        });
+
+        String[] months = getResources().getStringArray(R.array.group_dropdown_months);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_spinner, months);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.dateHeaderSpinner.setAdapter(arrayAdapter);
+        binding.dateHeaderSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                viewModel.filterGroupByMonth(getCalendarByMonth(months[position]));
+            }
+        });
 
         subscribe(viewModel, attendancesAdapter, datesAdapter);
         viewModel.update(prefs.getPrefsId());
@@ -112,6 +123,7 @@ public class GroupFragment extends Fragment {
         super.onStart();
         prefs = (UpdateSharedPreferences) requireContext();
         CredentialsDataSource.getInstance().updateLogin(prefs.getPrefsLogin(), prefs.getPrefsPassword());
+        binding.dateHeaderSpinner.setSelectedIndex(0);
         viewModel.update(prefs.getPrefsId());
     }
 
@@ -152,7 +164,7 @@ public class GroupFragment extends Fragment {
                     binding.tableProgressBar.setVisibility(View.GONE);
                     binding.tableErrorTv.setVisibility(View.GONE);
                     binding.tableContent.setVisibility(View.VISIBLE);
-                    if (state.getStudents().get(0).getAttendanceEntityList().isEmpty()) {
+                    if (state.getStudents().get(0).getAttendanceEntityList().isEmpty() && binding.dateHeaderSpinner.getSelectedIndex() == 0) {
                         binding.buttonsAttPointsLayout.setVisibility(View.GONE);
                         binding.hsrStudentsTable.setVisibility(View.GONE);
                         binding.studentsRv.setVisibility(View.GONE);
@@ -206,6 +218,15 @@ public class GroupFragment extends Fragment {
         calendar.set(Calendar.MONTH, monthIndex);
 
         return calendar;
+    }
+
+    private void unselect(Button button){
+        ColorStateList colorStateList = ContextCompat.getColorStateList(requireContext(), R.color.color_selector_unfocused);
+        button.setBackgroundTintList(colorStateList);
+    }
+    private void select(Button button){
+        ColorStateList colorStateList = ContextCompat.getColorStateList(requireContext(), R.color.color_selector_default);
+        button.setBackgroundTintList(colorStateList);
     }
 
     private void openStudentProfile(@NonNull String id) {
