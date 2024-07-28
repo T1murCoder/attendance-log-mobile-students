@@ -1,5 +1,7 @@
 package ru.technosopher.attendancelogappstudents.ui.studentprofile;
 
+import static ru.technosopher.attendancelogappstudents.ui.utils.Utils.setClipboard;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -120,7 +122,7 @@ public class StudentProfileFragment extends Fragment {
                     if (student.getTelegram_url() != null) {
                         binding.profileTelegramEt.setText(student.getTelegram_url());
                         binding.telegramContainerStudentProfile.setOnLongClickListener(v -> {
-                            setClipboard(student.getTelegram_url());
+                            setClipboard(student.getTelegram_url(), requireContext());
                             return true;
                         });
                     } else {
@@ -129,7 +131,7 @@ public class StudentProfileFragment extends Fragment {
                     if (student.getGithub_url() != null) {
                         binding.profileGithubEt.setText(student.getGithub_url());
                         binding.githubContainerStudentProfile.setOnLongClickListener(v -> {
-                            setClipboard(student.getGithub_url());
+                            setClipboard(student.getGithub_url(), requireContext());
                             return true;
                         });
                     } else {
@@ -155,7 +157,7 @@ public class StudentProfileFragment extends Fragment {
                     Glide.with(requireContext()).load(task.getResult()).into(binding.profileAvatarIv);
                 }
                 Log.d(TAG, "loadAvatar: " + task.isSuccessful());
-            } catch (RuntimeExecutionException e) {
+            } catch (Exception e) {
                 Log.d(TAG, "loadAvatar: " + false);
             }
         }).addOnFailureListener(e -> {
@@ -164,13 +166,6 @@ public class StudentProfileFragment extends Fragment {
             Log.d(TAG, "loadAvatar: " + false);
         });
 
-    }
-
-    private void setClipboard(String text) {
-        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
-        clipboard.setPrimaryClip(clip);
-        Toast.makeText(requireContext(), "Скопировано!", Toast.LENGTH_SHORT).show();
     }
 
 }

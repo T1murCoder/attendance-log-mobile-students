@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,10 +68,11 @@ public class GroupViewModel extends ViewModel {
                         List<StudentEntity> studentsByPoints = sortStudentsByPoints(sortedOrNullStudents);
                         Log.d(TAG, sortedOrNullStudents.toString());
                         Log.d(TAG, sortedOrNullStudents.get(0).getPoints());
-                        this.students = studentsByPoints;
-                        mutableStateLiveData.postValue(new State(group.getName(), studentsByPoints,
+                        this.students.clear();
+                        this.students.addAll(studentsByPoints);
+                        mutableStateLiveData.postValue(new State(group.getName(), this.students,
                                 status.getErrors() != null ? status.getErrors().getLocalizedMessage() : null,
-                                status.getErrors() == null && status.getValue() != null && !studentsByPoints.isEmpty(), false));
+                                status.getErrors() == null && status.getValue() != null && !this.students.isEmpty(), false));
                     });
                 } else {
                     mutableErrorLiveData.postValue("Вы не состоите в группе!");
@@ -103,39 +105,39 @@ public class GroupViewModel extends ViewModel {
     }
 
     // Фильтруем посещения по месяцам
-//    public void filterGroupByMonth(@Nullable Calendar month) {
-//        Log.d(TAG, String.valueOf(students));
-//        if (students == null || group == null) return;
-//
-//        if (month == null) {
-//            mutableStateLiveData.postValue(new State(group.getName(), students,
-//                    null,
-//                    true, false));
-//        } else {
-////            List<StudentEntity> filteredStudents = students.stream().map(
-////                    studentEntity -> studentEntity.setAttendanceEntityList(
-////                            studentEntity.getAttendanceEntityList().stream().filter(
-////                                    attendanceEntity -> attendanceEntity.getLessonTimeStart().get(Calendar.MONTH) == month.get(Calendar.MONTH)
-////                            ).collect(Collectors.toList())
-////                    )
-////            ).collect(Collectors.toList());
-//            List<StudentEntity> filteredStudents = new ArrayList<>();
-//            for (StudentEntity student : students) {
-//                // ТУТ ФИЛЬТРУЕМ Attendances
-//                StudentEntity studentWithFilteredAttendances = new StudentEntity(student);
-//                studentWithFilteredAttendances.setAttendanceEntityList(
-//                        studentWithFilteredAttendances.getAttendanceEntityList().stream()
-//                                .filter(
-//                                        attendanceEntity -> attendanceEntity.getLessonTimeStart().get(Calendar.MONTH) == month.get(Calendar.MONTH)
-//                                )
-//                                .collect(Collectors.toList())
-//                );
-//                filteredStudents.add(studentWithFilteredAttendances);
-//            }
-//            mutableStateLiveData.postValue(new State(group.getName(), filteredStudents,
-//                    null, true, false));
-//        }
-//    }
+    public void filterGroupByMonth(@Nullable Calendar month) {
+        Log.d(TAG, String.valueOf(students));
+        if (students == null || group == null) return;
+
+        if (month == null) {
+            mutableStateLiveData.postValue(new State(group.getName(), students,
+                    null,
+                    true, false));
+        } else {
+//            List<StudentEntity> filteredStudents = students.stream().map(
+//                    studentEntity -> studentEntity.setAttendanceEntityList(
+//                            studentEntity.getAttendanceEntityList().stream().filter(
+//                                    attendanceEntity -> attendanceEntity.getLessonTimeStart().get(Calendar.MONTH) == month.get(Calendar.MONTH)
+//                            ).collect(Collectors.toList())
+//                    )
+//            ).collect(Collectors.toList());
+            List<StudentEntity> filteredStudents = new ArrayList<>();
+            for (StudentEntity student : students) {
+                // ТУТ ФИЛЬТРУЕМ Attendances
+                StudentEntity studentWithFilteredAttendances = new StudentEntity(student);
+                studentWithFilteredAttendances.setAttendanceEntityList(
+                        studentWithFilteredAttendances.getAttendanceEntityList().stream()
+                                .filter(
+                                        attendanceEntity -> attendanceEntity.getLessonTimeStart().get(Calendar.MONTH) == month.get(Calendar.MONTH)
+                                )
+                                .collect(Collectors.toList())
+                );
+                filteredStudents.add(studentWithFilteredAttendances);
+            }
+            mutableStateLiveData.postValue(new State(group.getName(), filteredStudents,
+                    null, true, false));
+        }
+    }
 
     private List<StudentEntity> sortAttendancesForStudents(@Nullable List<StudentEntity> students) {
         if (students == null) return new ArrayList<>();
