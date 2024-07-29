@@ -24,6 +24,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.technosopher.attendancelogappstudents.data.source.CredentialsDataSource;
 import ru.technosopher.attendancelogappstudents.data.source.GroupApi;
+import ru.technosopher.attendancelogappstudents.data.source.JoinRequestApi;
 import ru.technosopher.attendancelogappstudents.data.source.LessonApi;
 import ru.technosopher.attendancelogappstudents.data.source.StudentApi;
 import ru.technosopher.attendancelogappstudents.data.source.UserApi;
@@ -62,7 +63,7 @@ public class RetrofitFactory {
             .create();
 
     private Retrofit retrofit = new Retrofit.Builder()
-//            .baseUrl("http://192.168.1.4:8085/") // local server
+//            .baseUrl("http://192.168.1.2:8085/") // local server
             .baseUrl("http://193.164.149.209:8085/") // remote server
             .client(client.build())
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -75,6 +76,8 @@ public class RetrofitFactory {
     public GroupApi getGroupApi() {return retrofit.create(GroupApi.class);}
 
     public StudentApi getStudentApi() { return retrofit.create(StudentApi.class); }
+
+    public JoinRequestApi getJoinRequestApi() { return retrofit.create(JoinRequestApi.class); }
 
 
     public class DateTypeAdapter implements JsonDeserializer<GregorianCalendar>, JsonSerializer<GregorianCalendar> {

@@ -15,12 +15,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import ru.technosopher.attendancelogappstudents.data.repository.GroupRepositoryImpl;
+import ru.technosopher.attendancelogappstudents.data.repository.JoinRequestRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.data.repository.StudentRepositoryImpl;
 import ru.technosopher.attendancelogappstudents.domain.entities.AttendanceEntity;
 
 import ru.technosopher.attendancelogappstudents.domain.entities.GroupEntity;
+import ru.technosopher.attendancelogappstudents.domain.entities.GroupJoinRequestEntity;
+import ru.technosopher.attendancelogappstudents.domain.entities.Status;
 import ru.technosopher.attendancelogappstudents.domain.entities.StudentEntity;
 import ru.technosopher.attendancelogappstudents.domain.groups.GetGroupByStudentIdUseCase;
+import ru.technosopher.attendancelogappstudents.domain.joinrequest.CreateRequestUseCase;
+import ru.technosopher.attendancelogappstudents.domain.joinrequest.DeclineRequestUseCase;
+import ru.technosopher.attendancelogappstudents.domain.joinrequest.GetRequestByStudentIdUseCase;
 import ru.technosopher.attendancelogappstudents.domain.students.GetStudentsAttendancesUseCase;
 import ru.technosopher.attendancelogappstudents.ui.utils.DateFormatter;
 
@@ -34,6 +40,9 @@ public class GroupViewModel extends ViewModel {
     private final MutableLiveData<String> mutableErrorLiveData = new MutableLiveData<>();
     public LiveData<String> errorLiveData = mutableErrorLiveData;
 
+    private final MutableLiveData<String> mutableInteractionLiveData = new MutableLiveData<>();
+    public LiveData<String> interactionLiveData = mutableInteractionLiveData;
+
     /* USE CASES */
     private final GetStudentsAttendancesUseCase getStudentsAttendancesUseCase = new GetStudentsAttendancesUseCase(
             StudentRepositoryImpl.getInstance()
@@ -43,14 +52,26 @@ public class GroupViewModel extends ViewModel {
             GroupRepositoryImpl.getInstance()
     );
 
+    private final GetRequestByStudentIdUseCase getRequestByStudentIdUseCase = new GetRequestByStudentIdUseCase(
+            JoinRequestRepositoryImpl.getInstance()
+    );
+
+    private final CreateRequestUseCase createRequestUseCase = new CreateRequestUseCase(
+            JoinRequestRepositoryImpl.getInstance()
+    );
+
+    private final DeclineRequestUseCase declineRequestUseCase = new DeclineRequestUseCase(
+            JoinRequestRepositoryImpl.getInstance()
+    );
+
     /* USE CASES */
     private GroupEntity group;
+    private static GroupJoinRequestEntity joinRequest;
 
     private List<StudentEntity> students = new ArrayList<>();
 
     // Передаём айди ученика
     public void update(@Nullable String id) {
-
         getGroupByStudentIdUseCase.execute(id, groupStatus -> {
             Log.d(TAG, "" + id);
             Log.d(TAG, "" + groupStatus.getValue());
@@ -59,9 +80,8 @@ public class GroupViewModel extends ViewModel {
             if (groupStatus.getStatusCode() == 200) {
                 group = groupStatus.getValue();
 
-
                 if (group != null) {
-                    mutableStateLiveData.postValue(new State(null, null, null, false, true));
+                    mutableStateLiveData.postValue(new State(null, null, null, false, true, null, true));
                     getStudentsAttendancesUseCase.execute(group.getId(), status -> {
                         List<StudentEntity> students = status.getValue() != null ? status.getValue() : null;
                         List<StudentEntity> sortedOrNullStudents = sortAttendancesForStudents(students);
@@ -72,18 +92,41 @@ public class GroupViewModel extends ViewModel {
                         this.students.addAll(studentsByPoints);
                         mutableStateLiveData.postValue(new State(group.getName(), this.students,
                                 status.getErrors() != null ? status.getErrors().getLocalizedMessage() : null,
-                                status.getErrors() == null && status.getValue() != null && !this.students.isEmpty(), false));
+                                status.getErrors() == null && status.getValue() != null && !this.students.isEmpty(), true, null, false));
                     });
                 } else {
-                    mutableErrorLiveData.postValue("Вы не состоите в группе!");
+                    mutableErrorLiveData.postValue("Что-то пошло не так. Попробуйте еще раз1");
                     group = null;
                 }
-            } else if (groupStatus.getStatusCode() == 404){
-                mutableErrorLiveData.postValue("Вы не состоите в группе!");
+            } else if (groupStatus.getStatusCode() == 404) {
+
+                getRequestByStudentIdUseCase.execute(id, this::processRequestByStudentIdUseCase);
                 group = null;
             } else {
-                mutableErrorLiveData.postValue("Что-то пошло не так. Попробуйте еще раз");
+                mutableErrorLiveData.postValue("Что-то пошло не так. Попробуйте еще раз2");
                 group = null;
+            }
+        });
+    }
+
+    public void createJoinRequest(String joinCode) {
+        createRequestUseCase.execute(joinCode, status -> {
+            Log.d(TAG, String.valueOf(status.getStatusCode()) + " createJoinRequest");
+            if (status.getStatusCode() == 200) {
+                mutableInteractionLiveData.postValue("Запрос отправлен!");
+            } else {
+                mutableInteractionLiveData.postValue("Что-то пошло не так");
+            }
+        });
+    }
+
+    public void cancelJoinRequest(String studentId) {
+        declineRequestUseCase.execute(studentId, status -> {
+            Log.d(TAG, String.valueOf(status.getStatusCode()) + " cancelJoinRequest");
+            if (status.getStatusCode() == 200) {
+                mutableInteractionLiveData.postValue("Запрос отменен");
+            } else {
+                mutableInteractionLiveData.postValue("Что-то пошло не так");
             }
         });
     }
@@ -112,7 +155,7 @@ public class GroupViewModel extends ViewModel {
         if (month == null) {
             mutableStateLiveData.postValue(new State(group.getName(), students,
                     null,
-                    true, false));
+                    true, true, null, false));
         } else {
 //            List<StudentEntity> filteredStudents = students.stream().map(
 //                    studentEntity -> studentEntity.setAttendanceEntityList(
@@ -135,7 +178,7 @@ public class GroupViewModel extends ViewModel {
                 filteredStudents.add(studentWithFilteredAttendances);
             }
             mutableStateLiveData.postValue(new State(group.getName(), filteredStudents,
-                    null, true, false));
+                    null, true, true, null, false));
         }
     }
 
@@ -161,6 +204,28 @@ public class GroupViewModel extends ViewModel {
         attendances.sort(Comparator.comparing(AttendanceEntity::getLessonTimeStart));
     }
 
+    private void processRequestByStudentIdUseCase(Status<GroupJoinRequestEntity> status) {
+        Log.d(TAG, String.valueOf(status.getStatusCode()) + " processRequestByStudentIdUseCase");
+        if (status.getStatusCode() == 200) {
+            joinRequest = status.getValue();
+
+            if (joinRequest != null) {
+                mutableStateLiveData.postValue(new State(null, null, null, false, false, true, false));
+            } else {
+                Log.d(TAG, "REQUEST IS NULL");
+                mutableErrorLiveData.postValue("Что-то пошло не так. Попробуйте еще раз3");
+                joinRequest = null;
+            }
+
+        } else if (status.getStatusCode() == 404) {
+            mutableStateLiveData.postValue(new State(null, null, null, false, false, false, false));
+            joinRequest = null;
+        } else {
+            mutableErrorLiveData.postValue("Что-то пошло не так. Попробуйте еще раз4");
+            group = null;
+        }
+    }
+
     public class State {
 
         @Nullable
@@ -171,14 +236,24 @@ public class GroupViewModel extends ViewModel {
         private final String errorMessage;
         @NonNull
         private final Boolean isSuccess;
+
+        // Отвечает за то, какой мы экран показываем
+        @NonNull
+        private final Boolean isGroupExists;
+
+        // Отвечает за то, какую мы кнопку показываем
+        @Nullable
+        private final Boolean isRequestExists;
         @NonNull
         private final Boolean isLoading;
 
-        public State(@Nullable String groupName, @Nullable List<StudentEntity> students, @Nullable String errorMessage, @NonNull Boolean isSuccess, @NonNull Boolean isLoading) {
+        public State(@Nullable String groupName, @Nullable List<StudentEntity> students, @Nullable String errorMessage, @NonNull Boolean isSuccess, @NonNull Boolean isGroupExists, @Nullable Boolean isRequestExists, @NonNull Boolean isLoading) {
             this.groupName = groupName;
             this.students = students;
             this.errorMessage = errorMessage;
             this.isSuccess = isSuccess;
+            this.isGroupExists = isGroupExists;
+            this.isRequestExists = isRequestExists;
             this.isLoading = isLoading;
         }
 
@@ -188,8 +263,18 @@ public class GroupViewModel extends ViewModel {
         }
 
         @Nullable
+        public Boolean getRequestExists() {
+            return isRequestExists;
+        }
+
+        @Nullable
         public String getErrorMessage() {
             return errorMessage;
+        }
+
+        @NonNull
+        public Boolean getGroupExists() {
+            return isGroupExists;
         }
 
         @NonNull

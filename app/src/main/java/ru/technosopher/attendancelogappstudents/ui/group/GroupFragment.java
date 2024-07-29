@@ -114,6 +114,13 @@ public class GroupFragment extends Fragment {
             }
         });
 
+        binding.btnSendRequest.setOnClickListener(v -> {
+            viewModel.createJoinRequest(binding.etGroupJoinCode.getText().toString().trim());
+        });
+        binding.btnCancelRequest.setOnClickListener(v -> {
+            viewModel.cancelJoinRequest(prefs.getPrefsId());
+        });
+
         subscribe(viewModel, attendancesAdapter, datesAdapter);
         viewModel.update(prefs.getPrefsId());
     }
@@ -159,11 +166,26 @@ public class GroupFragment extends Fragment {
                 binding.tableErrorTv.setVisibility(View.GONE);
                 binding.tableProgressBar.setVisibility(View.VISIBLE);
             } else {
-                if (state.getSuccess()) {
+                if (!state.getGroupExists()) {
+                    binding.tableProgressBar.setVisibility(View.GONE);
+                    binding.tableErrorTv.setVisibility(View.GONE);
+                    binding.tableContent.setVisibility(View.GONE);
+                    binding.sendJoinRequestContent.setVisibility(View.VISIBLE);
+
+                    if (Boolean.TRUE.equals(state.getRequestExists()))  {
+                        binding.btnSendRequest.setVisibility(View.GONE);
+                        binding.btnCancelRequest.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.btnSendRequest.setVisibility(View.VISIBLE);
+                        binding.btnCancelRequest.setVisibility(View.GONE);
+                    }
+
+                } else if (state.getSuccess()) {
                     binding.tableGroupName.setText(state.getGroupName());
                     binding.tableProgressBar.setVisibility(View.GONE);
                     binding.tableErrorTv.setVisibility(View.GONE);
                     binding.tableContent.setVisibility(View.VISIBLE);
+                    binding.sendJoinRequestContent.setVisibility(View.GONE);
                     if (state.getStudents().get(0).getAttendanceEntityList().isEmpty() && binding.dateHeaderSpinner.getSelectedIndex() == 0) {
                         binding.buttonsAttPointsLayout.setVisibility(View.GONE);
                         binding.hsrStudentsTable.setVisibility(View.GONE);
@@ -191,6 +213,12 @@ public class GroupFragment extends Fragment {
             binding.tableErrorTv.setVisibility(View.VISIBLE);
             binding.tableErrorTv.setText(errorMsg);
             binding.tableContent.setVisibility(View.GONE);
+            binding.sendJoinRequestContent.setVisibility(View.GONE);
+        });
+
+        viewModel.interactionLiveData.observe(getViewLifecycleOwner(), msg -> {
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+            viewModel.update(prefs.getPrefsId());
         });
     }
 
