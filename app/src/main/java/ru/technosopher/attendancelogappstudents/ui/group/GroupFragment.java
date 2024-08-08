@@ -60,7 +60,7 @@ public class GroupFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentGroupBinding.bind(view);
-        prefs = (UpdateSharedPreferences) requireContext();
+//        prefs = (UpdateSharedPreferences) requireContext();
 
         select(binding.attendanceBtn);
         unselect(binding.pointsBtn);
@@ -147,6 +147,8 @@ public class GroupFragment extends Fragment {
             navigationBarChangeListener = (NavigationBarChangeListener) context;
             prefs = (UpdateSharedPreferences) context;
         } catch (ClassCastException e) {
+            Log.d(TAG, "CRASHED OnAttach");
+            Log.d(TAG, "OnAttach " + e.toString());
             throw new ClassCastException(context.toString());
         }
     }
