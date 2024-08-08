@@ -135,7 +135,7 @@ public class GroupViewModel extends ViewModel {
         List<String> dates = new ArrayList<>();
         sortAttendances(attendances);
         for (AttendanceEntity att : attendances) {
-            dates.add(DateFormatter.getDateStringFromDate(att.getLessonTimeStart(), "MMM dd"));
+            dates.add(DateFormatter.getDateStringFromDate(att.getLessonTimeStart(), "MMM\ndd"));
         }
         return dates;
     }
